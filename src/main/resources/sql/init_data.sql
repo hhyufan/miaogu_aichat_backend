@@ -4,6 +4,15 @@ USE miaogu_aichat;
 
 
 -- 创建好友表（如果不存在）
+CREATE TABLE IF NOT EXISTS user (
+                                      id INT AUTO_INCREMENT  NOT NULL PRIMARY KEY,
+                                      username VARCHAR(50) NOT NULL,
+                                      password VARCHAR(100) NOT NULL,
+                                      email VARCHAR(50) NOT NULL
+);
+
+
+-- 创建好友表（如果不存在）
 CREATE TABLE IF NOT EXISTS friend (
                                       id VARCHAR(20) NOT NULL PRIMARY KEY,
                                       name VARCHAR(50) NOT NULL,

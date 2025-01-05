@@ -5,6 +5,15 @@ CREATE DATABASE miaogu_aichat;
 DROP TABLE IF EXISTS chat_message;
 DROP TABLE IF EXISTS friend;
 
+DROP TABLE IF EXISTS user;
+CREATE TABLE IF NOT EXISTS user (
+                                    id INT AUTO_INCREMENT  NOT NULL PRIMARY KEY,
+                                    username VARCHAR(50) NOT NULL UNIQUE ,
+                                    password VARCHAR(100) NOT NULL,
+                                    email VARCHAR(50) NOT NULL UNIQUE
+);
+
+
 -- 创建好友表（如果不存在）
 CREATE TABLE friend (
                                       id VARCHAR(20) NOT NULL PRIMARY KEY,

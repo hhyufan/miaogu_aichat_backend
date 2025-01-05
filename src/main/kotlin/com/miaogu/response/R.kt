@@ -2,7 +2,7 @@ package com.miaogu.response
 
 data class R<T>(
     val code: Int,
-    val msg: String? = null,
+    val msg: Pair<String, String>? = null,
     val data: T? = null
 ) {
     companion object {
@@ -10,28 +10,31 @@ data class R<T>(
             return R(ResponseCode.SUCCESS.code)
         }
 
-        fun <T> success(msg: String): R<T> {
-            return R(ResponseCode.SUCCESS.code, msg)
+        fun <T> success(msg: Pair<String, String>?, data: T): R<T> {
+            return R(ResponseCode.SUCCESS.code,  msg, data)
         }
 
         fun <T> success(data: T): R<T> {
-            return R(ResponseCode.SUCCESS.code, ResponseCode.SUCCESS.msg, data)
+            return R(ResponseCode.SUCCESS.code, "success" to ResponseCode.SUCCESS.msg, data)
         }
 
         fun <T> fail(): R<T> {
             return R(ResponseCode.FAIL.code)
         }
 
-        fun <T> fail(msg: String): R<T> {
+        fun <T> fail(msg: Pair<String, String>?): R<T> {
             return R(ResponseCode.FAIL.code, msg)
         }
 
         fun <T> fail(data: T): R<T> {
-            return R(ResponseCode.FAIL.code, ResponseCode.FAIL.msg, data)
+            return R(ResponseCode.FAIL.code, "error" to ResponseCode.FAIL.msg, data)
         }
 
-        fun fail(code: Int, msg: String): R<Nothing> {
-            return R(code, msg)
+        fun fail(code: Int, msg: Pair<String, String>?): R<Nothing> {
+            return R(code,  msg)
+        }
+        fun <T> fail(msg: Pair<String, String>?, data: T): R<T> {
+            return R(ResponseCode.SUCCESS.code,  msg, data)
         }
     }
 }

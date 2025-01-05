@@ -25,7 +25,7 @@ spring:
       max-wait: 6000
   graphql:
     cors:
-      allowed-origins: http://localhost:5175
+      allowed-origins: http://localhost:5173
 
 server:
   port: 8088
