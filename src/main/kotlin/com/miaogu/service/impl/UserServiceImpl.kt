@@ -30,12 +30,10 @@ class UserServiceImpl(private val userMapper: UserMapper) : ServiceImpl<UserMapp
         }
 
         // Function to check credentials
-        fun checkCredentials(userInfo: User?, password: String?): Pair<String, String> {
-            return when {
-                userInfo == null -> "error" to "用户名或邮箱不存在"
-                userInfo.password != password -> "error" to "密码错误"
-                else -> "success" to "登录成功！"
-            }
+        fun checkCredentials(userInfo: User?, password: String?): Pair<String, String> = when {
+            userInfo == null -> "error" to "用户名或邮箱不存在"
+            userInfo.password != password -> "error" to "密码错误"
+            else -> "success" to "登录成功！"
         }
 
         // Check username
@@ -44,6 +42,7 @@ class UserServiceImpl(private val userMapper: UserMapper) : ServiceImpl<UserMapp
         }
         // Check email
         userMapper.selectOne(QueryWrapper<User>().eq("email", user.username))?.let {
+            println(checkCredentials(it, user.password))
             return checkCredentials(it, user.password)
         }
 

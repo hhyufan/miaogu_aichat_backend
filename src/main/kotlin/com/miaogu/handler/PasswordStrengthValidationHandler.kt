@@ -17,7 +17,6 @@ class PasswordStrengthValidationHandler : UserValidationHandler() {
         // 使用正则表达式验证密码
         if (!passwordRegex.matches(user.password)) {
             super.currentError = "密码强度低！"
-            println(currentError)
             return
         }
 

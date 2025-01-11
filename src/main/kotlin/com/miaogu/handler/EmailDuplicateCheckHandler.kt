@@ -15,7 +15,6 @@ class EmailDuplicateCheckHandler(private var target: UserMapper) : UserValidatio
     override fun handle(user: User) {
         if (target.selectOne(QueryWrapper<User>().eq("email", user.email)) != null) {
             currentError = "邮箱已存在！"
-            println(currentError)
             return
         }
         nextHandler?.handle(user)

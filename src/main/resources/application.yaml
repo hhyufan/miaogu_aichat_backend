@@ -13,7 +13,7 @@ spring:
     name: miaogu_aichat
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql:///miaogu_aichat?severTimezone=UTC
+    url: jdbc:mysql:///ry-vue?severTimezone=UTC
     username: root
     password: root
     type: com.alibaba.druid.pool.DruidDataSource

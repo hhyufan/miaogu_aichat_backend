@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS miaogu_aichat;
+CREATE DATABASE IF NOT EXISTS `ry-vue` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-USE miaogu_aichat;
+USE`ry-vue`;
 
 
 -- 创建好友表（如果不存在）

@@ -15,7 +15,6 @@ class UsernameDuplicateCheckHandler(private var target: UserMapper) : UserValida
     override fun handle(user: User) {
         if (target.selectOne(QueryWrapper<User>().eq("username", user.username)) != null) {
             currentError = "用户名已存在！"
-            println(currentError)
             return
         }
         nextHandler?.handle(user)
