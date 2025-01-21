@@ -72,11 +72,11 @@
 
 - **获取所有聊天3.5消息**: `GET /1002/messages`
 
-- **发送聊天3.5消息**: `POST /1002/send`
+- **发送Chat3.5消息**: `POST /1002/send`
 
 - **获取所有聊天4消息**: `GET /1003/messages`
 
-- **发送聊天4消息**: `POST /1003/send`
+- **发送Chat4消息**: `POST /1003/send`
 
 - **清除聊天消息**: `DELETE /chat/clear`
 
