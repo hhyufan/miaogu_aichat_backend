@@ -38,7 +38,7 @@
 
 3. **初始化数据库**
 
-   - 使用 `src/main/resources/sql/refactor_data.sql` 创建数据库和表（在MySQL命令行或数据库管理工具中执行）
+   - 使用 `src/main/resources/sql/init_data.sql` 创建数据库和表（在MySQL命令行或数据库管理工具中执行）
    - 启动Springboot时，会自动执行sql文件，创建数据库和表
 
 4. **AI 配置**
