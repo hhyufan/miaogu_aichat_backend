@@ -26,6 +26,10 @@ spring:
     cors:
       allowed-origins: http://localhost:5173
 
+logging:
+  level:
+    root: info
+
 server:
   port: 8088
 

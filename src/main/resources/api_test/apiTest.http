@@ -1,0 +1,68 @@
+### 获取所有聊天3.5消息
+GET http://localhost:8088/1002/messages
+Accept: application/json
+
+###
+
+### 发送聊天3.5消息
+POST http://localhost:8088/1002/send
+Content-Type: application/json
+
+{
+  "time": "2023-01-01 10:00:00",
+  "msg": "Hi, this is a test message!",
+  "uid": "User"
+}
+
+###
+
+### 获取所有聊天4消息
+GET http://localhost:8088/1003/messages
+Accept: application/json
+
+###
+
+### 发送聊天4消息
+POST http://localhost:8088/1003/send
+Content-Type: application/json
+
+{
+  "time": "2023-01-01 10:00:00",
+  "msg": "Hello from ChatGPT 4!",
+  "uid": "User"
+}
+
+###
+
+### 清除聊天消息
+DELETE http://localhost:8088/chat/clear
+Accept: application/json
+
+###
+
+### 获取好友列表
+GET http://localhost:8088/friend/friendList
+Accept: application/json
+
+###
+
+### 用户登录
+POST http://localhost:8088/user/login
+Content-Type: application/json
+
+{
+  "username": "testUser",
+  "password": "testPassword"
+}
+
+###
+
+### 用户注册
+POST http://localhost:8088/user/register
+Content-Type: application/json
+
+{
+  "username": "newUser",
+  "email": "newUser@example.com",
+  "password": "newPassword"
+}

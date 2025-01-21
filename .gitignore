@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### OpenAI Config ###
+/src/main/resources/openai-config.yaml
