@@ -1,12 +1,11 @@
 spring:
+  config:
+    import: "classpath:openai-config.yaml"
   ai:
     openai:
       base-url: https://api.openai.com/
       api-key: sk-xxx
       chat:
-        #指定某一个API配置(覆盖全局配置)
-        base-url: https://api.chatanywhere.tech
-        api-key: sk-3xv6gSr2JY2Z3pPsaoA0tFNWCT1OjQhWlLDv53SiNDLV5IXC
         options:
           model: gpt-3.5-turbo # 模型默认配置
   application:

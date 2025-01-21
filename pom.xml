@@ -17,8 +17,8 @@
 
 
 	<properties>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 		<kotlin.version>1.8.0</kotlin.version> <!-- 添加 Kotlin 版本 -->
 	</properties>
 	<dependencies>
