@@ -93,6 +93,8 @@
 
 - **用户注册**: `POST /user/register`
 
+- **令牌刷新**: `POST /user/refresh`
+
 ## 🐾 贡献
 
 欢迎任何形式的贡献 (๑•̀ㅂ•́)و！如果你有好的想法或发现了bug，请提交Issue或Pull Request(˘•ω•˘)◞⁽˙³˙⁾。
