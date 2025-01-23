@@ -1,5 +1,6 @@
 package com.miaogu.controller
 
+import com.miaogu.annotation.RequireJwt
 import com.miaogu.entity.Chat4Message
 import com.miaogu.extension.toJson
 import com.miaogu.response.R
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/1003")
+@RequireJwt
 class Chat4MessageController(
     private val chat4MessageService: Chat4MessageService,
     private val chatService: ChatService

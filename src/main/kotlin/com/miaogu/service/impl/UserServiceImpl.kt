@@ -6,10 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
 import com.miaogu.chain.UserValidationChain
 import com.miaogu.entity.User
 import com.miaogu.mapper.UserMapper
+import com.miaogu.service.JwtService
 import org.springframework.stereotype.Service
 
 @Service
-class UserServiceImpl(private val userMapper: UserMapper) : ServiceImpl<UserMapper, User>(), UserService {
+class UserServiceImpl(private val userMapper: UserMapper, private val jwtService: JwtService) : ServiceImpl<UserMapper, User>(), UserService {
 
     override fun register(user: User?): Pair<String, String> {
         val validationChain = UserValidationChain(userMapper)
@@ -18,8 +19,9 @@ class UserServiceImpl(private val userMapper: UserMapper) : ServiceImpl<UserMapp
         if (error != null) {
             return "error" to error
         } else {
+            val token = user?.let { jwtService.generateToken(it.username) }
             userMapper.insert(user!!)
-            return "success" to "注册成功!"
+            return "success" to token!!
         }
     }
 
@@ -29,11 +31,14 @@ class UserServiceImpl(private val userMapper: UserMapper) : ServiceImpl<UserMapp
             return "error" to "用户名或邮箱不能为空"
         }
 
-        // Function to check credentials
         fun checkCredentials(userInfo: User?, password: String?): Pair<String, String> = when {
             userInfo == null -> "error" to "用户名或邮箱不存在"
             userInfo.password != password -> "error" to "密码错误"
-            else -> "success" to "登录成功！"
+            else -> {
+
+                val token = jwtService.generateToken(userInfo.username) // 生成 JWT 令牌
+                "success" to token // 返回成功状态和 JWT
+            }
         }
 
         // Check username
@@ -42,7 +47,6 @@ class UserServiceImpl(private val userMapper: UserMapper) : ServiceImpl<UserMapp
         }
         // Check email
         userMapper.selectOne(QueryWrapper<User>().eq("email", user.username))?.let {
-            println(checkCredentials(it, user.password))
             return checkCredentials(it, user.password)
         }
 

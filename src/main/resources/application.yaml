@@ -1,4 +1,8 @@
 spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
   config:
     import: "classpath:openai-config.yaml"
   ai:
@@ -37,8 +41,10 @@ pagehelper:
   helper-dialect: mysql
   support-methods-arguments: true
   reasonable: true
-
-
+jwt:
+  fixed-rate: 8
+  refresh-expire: 86400000
+  expire: 3600000
 #打印sql语句到控台
 mybatis-plus:
   configuration:

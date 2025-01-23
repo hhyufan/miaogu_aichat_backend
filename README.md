@@ -38,13 +38,20 @@
        username: root
        password: root
    ```
+3. **启动redis服务**
 
-3. **初始化数据库**
+   首先需要安装并运行 Redis 服务。
+   你可以通过运行以下命令来验证 Redis 服务是否成功启动：
+   ```bash
+   redis-cli ping
+   ```
+   如果返回 PONG，则表示 Redis 服务已成功启动。
+4. **初始化数据库**
 
    - 使用 `src/main/resources/sql/refactor_data.sql` 创建数据库和表（在MySQL命令行或数据库管理工具中执行）
    - 启动Springboot时，会自动执行sql文件，创建数据库和表
 
-4. **AI 配置**
+5. **AI 配置**
    在`src/main/resources`中创建名为`openai-config.yaml`的配置文件，并配置你的OpenAI API域名以及密钥：
    ```
    spring:
@@ -54,7 +61,7 @@
            api-key: your-api-key
            base-url: your-api-base-url
    ```
-5. **构建与运行**
+6. **构建与运行**
 
    使用Maven构建项目并运行：
 
