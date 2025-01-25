@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.util.Date
+import java.io.Serializable
 
 @TableName("chat3_5_message")
 data class Chat3Message(
@@ -13,4 +14,4 @@ data class Chat3Message(
     override val time: Date,
     override val msg: String,
     override val uid: String
-): ChatMessage
+): ChatMessage, Serializable
