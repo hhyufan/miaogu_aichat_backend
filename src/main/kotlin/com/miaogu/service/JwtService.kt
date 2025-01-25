@@ -6,7 +6,7 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import java.security.SecureRandom
 import java.util.Base64
@@ -16,9 +16,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 @Service
-class JwtService(
-    private val redisTemplate: RedisTemplate<String, String>
-) {
+class JwtService(private val redisTemplate: StringRedisTemplate) {
     private val scheduler: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
     @Value("\${jwt.expire}")
     private val expirationTime: Long = 3600000 // 1小时
