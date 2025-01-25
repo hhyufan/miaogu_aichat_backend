@@ -20,10 +20,12 @@ class UserController(private val userService: UserService, private val jwtServic
         val user = userDTO.toEntity()
         val loginPair = userService.login(user)
         val refreshToken = jwtService.generateRefreshToken(userDTO.username)
-
+        if (loginPair.first == "error") {
+            return R.fail("error" to loginPair.second, userDTO)
+        }
         return R.success(mapOf(
-            "token" to loginPair.second,
             "refreshToken" to refreshToken,
+            "token" to loginPair.second,
             "expiresIn" to expirationTime.toString()
         ), userDTO)
     }
@@ -33,8 +35,10 @@ class UserController(private val userService: UserService, private val jwtServic
     fun register(@RequestBody userDTO: UserDTO): R<UserDTO>  {
         val user = userDTO.toEntity()
         val refreshToken = jwtService.generateRefreshToken(userDTO.username)
-        val registerPair = userService.login(user)
-
+        val registerPair = userService.register(user)
+        if (registerPair.first == "error") {
+            return R.fail("error" to registerPair.second, userDTO)
+        }
         return R.success( mapOf(
             "token" to registerPair.second,
             "refreshToken" to refreshToken,
@@ -46,6 +50,7 @@ class UserController(private val userService: UserService, private val jwtServic
         if (jwtService.validateRefreshToken(refreshTokenDTO.username, refreshTokenDTO.refreshToken)) {
             val newToken = jwtService.generateToken(refreshTokenDTO.username)
             val refreshToken = jwtService.generateRefreshToken(refreshTokenDTO.username)
+
             return R.success(mapOf(
                 "token" to newToken,
                 "refreshToken" to refreshToken

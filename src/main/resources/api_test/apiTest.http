@@ -51,8 +51,8 @@ POST http://localhost:8088/user/login
 Content-Type: application/json
 
 {
-  "username": "YuFan",
-  "password": "@Admin23"
+  "username": "newUser",
+  "password": "@newPassword123"
 }
 
 ###
@@ -63,8 +63,8 @@ Content-Type: application/json
 
 {
   "username": "newUser",
-  "email": "newUser@example.com",
-  "password": "newPassword"
+  "email": "newUser12334@example.com",
+  "password": "@newPassword123"
 }
 
 ### 刷新令牌请求
