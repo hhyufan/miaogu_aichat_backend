@@ -1,14 +1,19 @@
 package com.miaogu.controller
 
+import com.miaogu.dto.RefreshTokenDTO
 import com.miaogu.service.UserService
 import com.miaogu.dto.UserDTO
 import com.miaogu.response.R
 import com.miaogu.service.JwtService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
 class UserController(private val userService: UserService, private val jwtService: JwtService) {
+    @Value("\${jwt.expire}")
+    private val expirationTime: Long = 3600000 // 1小时
+
     @PostMapping("/login")
     @ResponseBody
     fun login(@RequestBody userDTO: UserDTO): R<UserDTO> {
@@ -18,7 +23,8 @@ class UserController(private val userService: UserService, private val jwtServic
 
         return R.success(mapOf(
             "token" to loginPair.second,
-            "refreshToken" to refreshToken
+            "refreshToken" to refreshToken,
+            "expiresIn" to expirationTime.toString()
         ), userDTO)
     }
 
@@ -26,19 +32,20 @@ class UserController(private val userService: UserService, private val jwtServic
     @ResponseBody
     fun register(@RequestBody userDTO: UserDTO): R<UserDTO>  {
         val user = userDTO.toEntity()
-        val registerPair = userService.login(user)
         val refreshToken = jwtService.generateRefreshToken(userDTO.username)
+        val registerPair = userService.login(user)
 
         return R.success( mapOf(
             "token" to registerPair.second,
-            "refreshToken" to refreshToken
+            "refreshToken" to refreshToken,
+            "expiresIn" to expirationTime.toString()
         ), userDTO)
     }
     @PostMapping("/refresh")
-    fun refresh(@RequestParam username: String, @RequestParam refreshToken: String): R<Map<String, String>> {
-        if (jwtService.validateRefreshToken(username, refreshToken)) {
-            val newToken = jwtService.generateToken(username)
-            val refreshToken = jwtService.generateRefreshToken(username)
+    fun refresh(@RequestBody refreshTokenDTO: RefreshTokenDTO): R<out Map<String, Any>> {
+        if (jwtService.validateRefreshToken(refreshTokenDTO.username, refreshTokenDTO.refreshToken)) {
+            val newToken = jwtService.generateToken(refreshTokenDTO.username)
+            val refreshToken = jwtService.generateRefreshToken(refreshTokenDTO.username)
             return R.success(mapOf(
                 "token" to newToken,
                 "refreshToken" to refreshToken

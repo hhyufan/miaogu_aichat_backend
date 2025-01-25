@@ -10,10 +10,10 @@ data class R<T>(
             return R(ResponseCode.SUCCESS.code)
         }
         fun <T> success(msg: Pair<String, String>?): R<T> {
-            return R(ResponseCode.SUCCESS.code,  mapOf( "success" to ResponseCode.SUCCESS.msg))
+            return R(ResponseCode.SUCCESS.code,  msg?.let { mapOf( it.first to it.second) })
         }
         fun <T> success(msg: Pair<String, String>?, data: T): R<T> {
-            return R(ResponseCode.SUCCESS.code,  mapOf( "success" to ResponseCode.SUCCESS.msg), data)
+            return R(ResponseCode.SUCCESS.code, msg?.let { mapOf( it.first to it.second) }, data)
         }
         fun <T> success(msg: Map<String, String>?, data: T): R<T> {
             return R(ResponseCode.SUCCESS.code,  msg, data)
@@ -28,7 +28,7 @@ data class R<T>(
         }
 
         fun <T> fail(msg: Pair<String, String>?): R<T> {
-            return R(ResponseCode.FAIL.code, mapOf("error" to ResponseCode.FAIL.msg))
+            return R(ResponseCode.FAIL.code, msg?.let { mapOf( it.first to it.second) })
         }
 
         fun <T> fail(data: T): R<T> {
@@ -36,10 +36,10 @@ data class R<T>(
         }
 
         fun fail(code: Int, msg: Pair<String, String>?): R<Nothing> {
-            return R(code  , mapOf("error" to ResponseCode.FAIL.msg))
+            return R(code  , msg?.let { mapOf( it.first to it.second) })
         }
         fun <T> fail(msg: Pair<String, String>?, data: T): R<T> {
-            return R(ResponseCode.SUCCESS.code,  mapOf("error" to ResponseCode.FAIL.msg), data)
+            return R(ResponseCode.SUCCESS.code,  msg?.let { mapOf( it.first to it.second) }, data)
         }
     }
 }

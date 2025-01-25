@@ -101,8 +101,6 @@ class JwtService(
     fun validateToken(token: String, username: String): Boolean {
         return try {
             val claims = extractAllClaims(token)
-            println("subject: " + claims.subject)
-            println("username: $username")
             claims.subject == username && !isTokenExpired(claims)
         } catch (e: Exception) {
             println("JWT Validation Error: ${e.message}") // 捕获并打印异常
@@ -117,7 +115,6 @@ class JwtService(
     private fun extractAllClaims(token: String): Claims {
         for (key in secretKeys) {
             try {
-                println("Validating token with secret key: $key")
                 return Jwts.parser().setSigningKey(key).parseClaimsJws(token).body
             } catch (_: Exception) {
                 // Continue to the next key
