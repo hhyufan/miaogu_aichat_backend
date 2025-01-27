@@ -10,7 +10,7 @@ class EmailFormatValidationHandler : UserValidationHandler() {
     }
 
     override fun handle(user: User) {
-        if (!user.email.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"))) {
+        if (!user.email!!.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"))) {
             super.currentError = "邮箱格式错误！"
             return
         }

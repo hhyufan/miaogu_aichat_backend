@@ -31,7 +31,7 @@ class UserServiceImpl(
             // 生成 JWT 令牌并插入用户
             user?.let {
                 // 对密码进行加盐和哈希处理
-                it.password = passwordService.encodePassword(it.password)
+                it.password = it.password?.let { rawPassword -> passwordService.encodePassword(rawPassword) }
                 userMapper.insert(it)
                 val token = jwtService.generateToken(it.username)
                 "success" to token // 返回成功状态和 JWT
@@ -43,13 +43,13 @@ class UserServiceImpl(
 
     override fun login(user: User?): Pair<String, String> {
         // 验证用户输入
-        if (user == null || (user.username.isEmpty() && user.email.isEmpty())) {
+        if (user == null || (user.username.isEmpty() && user.email?.isEmpty() == true)) {
             return "error" to "用户名或邮箱不能为空"
         }
 
         fun checkCredentials(userInfo: User?, password: String?): Pair<String, String> = when {
             userInfo == null -> "error" to "用户名或邮箱不存在"
-            !passwordService.matches(password ?: "", userInfo.password) -> "error" to "密码错误" // 使用 PasswordService 验证密码
+            !userInfo.password?.let { passwordService.matches(password ?: "", it) }!! -> "error" to "密码错误" // 使用 PasswordService 验证密码
             else -> {
                 val token = jwtService.generateToken(userInfo.username) // 生成 JWT 令牌
                 "success" to token // 返回成功状态和 JWT

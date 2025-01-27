@@ -10,10 +10,9 @@ import java.io.Serializable
 data class Chat4Message(
     @TableId
     override val id: Long? = null,
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     override val time: Date,
     override val msg: String,
     override val uid: String,
-    override val username: String? = null
+    override var username: String? = null
 ): ChatMessage, Serializable

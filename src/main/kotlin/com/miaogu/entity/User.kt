@@ -6,8 +6,8 @@ import com.miaogu.dto.UserDTO
 @TableName("user")
 data class User(
     val username: String = "",
-    val email: String = "",
-    var password: String = ""
+    val email: String? = "",
+    var password: String? = ""
 
 ) {
     fun toDTO() : UserDTO {

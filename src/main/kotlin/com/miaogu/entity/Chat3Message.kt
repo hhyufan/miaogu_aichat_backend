@@ -14,5 +14,5 @@ data class Chat3Message(
     override val time: Date,
     override val msg: String,
     override val uid: String,
-    override val username: String? = null
+    override var username: String? = null
 ): ChatMessage, Serializable

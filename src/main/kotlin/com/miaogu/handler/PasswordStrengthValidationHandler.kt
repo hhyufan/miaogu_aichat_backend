@@ -15,9 +15,11 @@ class PasswordStrengthValidationHandler : UserValidationHandler() {
         val passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@!%*#?&])[A-Za-z\\d$@!%*#?&]{8,24}$".toRegex()
         println(user.password)
         // 使用正则表达式验证密码
-        if (!passwordRegex.matches(user.password)) {
-            super.currentError = "密码强度低！"
-            return
+        user.password?.let {
+            if (!passwordRegex.matches(it)) {
+                super.currentError = "密码强度低！"
+                return
+            }
         }
 
         // 如果验证通过，继续调用下一个处理器

@@ -4,8 +4,8 @@ import com.miaogu.entity.User
 
 data class UserDTO(
     val username: String = "",
-    val password: String = "",
-    val email: String = ""
+    val password: String? = "",
+    val email: String? = ""
 ) {
     fun toEntity(): User {
         return User(
