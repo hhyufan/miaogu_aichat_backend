@@ -40,9 +40,10 @@ class Chat3MessageController(
     fun sendChat3Message(@RequestBody chatMessage: Chat3Message): R<String?> {
         val queryWrapper = QueryWrapper<Chat3Message>()
         queryWrapper.eq("username", username)
+        chatMessage.username = username
+        chat3MessageService.save(chatMessage)
         val response = chatService.chat(chatMessage, chat3MessageService.list(queryWrapper).toJson(), 3)
         response?.let { msg ->
-            println("username: $username")
             Chat3Message(null, chatMessage.time, msg, "AI", username).also {
                 chat3MessageService.save(it)
             }
