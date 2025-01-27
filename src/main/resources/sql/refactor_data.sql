@@ -1,10 +1,12 @@
-USE miaogu_aichat;
+USE `ry-vue`;
 
-DROP DATABASE IF EXISTS miaogu_aichat;
-CREATE DATABASE miaogu_aichat;
+DROP DATABASE IF EXISTS `ry-vue`;
+CREATE DATABASE `ry-vue` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 DROP TABLE IF EXISTS chat_message;
 DROP TABLE IF EXISTS friend;
-
+DROP TABLE IF EXISTS chat3_5_message;
+DROP TABLE IF EXISTS chat4_message;
 DROP TABLE IF EXISTS user;
 CREATE TABLE IF NOT EXISTS user (
                                     id INT AUTO_INCREMENT  NOT NULL PRIMARY KEY,
@@ -14,7 +16,7 @@ CREATE TABLE IF NOT EXISTS user (
 );
 
 
--- 创建好友表（如果不存在）
+-- 创建好友表
 CREATE TABLE friend (
                                       id VARCHAR(20) NOT NULL PRIMARY KEY,
                                       name VARCHAR(50) NOT NULL,
@@ -26,7 +28,8 @@ CREATE TABLE  chat3_5_message (
                                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                                time DATETIME NOT NULL,
                                                msg TEXT NOT NULL,
-                                               uid VARCHAR(20) NOT NULL
+                                               uid VARCHAR(20) NOT NULL,
+                                               username VARCHAR(50) NOT NULL
 );
 
 -- 创建ChatGPT 4消息表
@@ -34,7 +37,8 @@ CREATE TABLE chat4_message (
                                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                              time DATETIME NOT NULL,
                                              msg TEXT NOT NULL,
-                                             uid VARCHAR(20) NOT NULL
+                                             uid VARCHAR(20) NOT NULL,
+                                             username VARCHAR(50) NOT NULL
 );
 
 -- 插入初始好友数据
@@ -44,11 +48,11 @@ INSERT INTO friend (id, name, detail) VALUES
                                                     ('1003', '白州梓', 'ChatGPT4o-mini');
 
 -- 插入初始聊天记录（ChatGPT 3.5）
-INSERT INTO chat3_5_message (time, msg, uid) VALUES
-                                                 ('2023-01-01 09:12:00', '在吗？', '1001'),
-                                                 ('2023-01-01 09:12:00', '怎么了？', '1002');
+INSERT INTO chat3_5_message (time, msg, uid, username) VALUES
+                                                 ('2023-01-01 09:12:00', '在吗？', '1001', 'newUser'),
+                                                 ('2023-01-01 09:12:00', '怎么了？', '1002', 'newUser');
 
 -- 插入初始聊天记录（ChatGPT 4）
-INSERT INTO chat4_message (time, msg, uid) VALUES
-                                               ('2023-01-01 09:12:00', '在干嘛呢', '1001'),
-                                               ('2023-01-01 09:12:00', '吃饭', '1002');
+INSERT INTO chat4_message (time, msg, uid, username) VALUES
+                                               ('2023-01-01 09:12:00', '在干嘛呢', '1001', 'newUser'),
+                                               ('2023-01-01 09:12:00', '吃饭', '1002', 'newUser');

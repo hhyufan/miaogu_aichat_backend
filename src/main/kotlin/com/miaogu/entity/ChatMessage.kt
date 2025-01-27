@@ -7,4 +7,5 @@ interface ChatMessage {
     val time: Date
     val msg: String
     val uid: String
+    val username: String?
 }

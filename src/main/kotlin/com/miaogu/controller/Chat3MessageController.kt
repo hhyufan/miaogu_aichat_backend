@@ -1,11 +1,13 @@
 package com.miaogu.controller
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.miaogu.annotation.RequireJwt
 import com.miaogu.entity.Chat3Message
 import com.miaogu.extension.toJson
 import com.miaogu.response.R
 import com.miaogu.service.Chat3MessageService
 import com.miaogu.service.ChatService
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -13,15 +15,22 @@ import org.springframework.web.bind.annotation.*
 @RequireJwt
 class Chat3MessageController(
     private val chat3MessageService: Chat3MessageService,
-    private val chatService: ChatService
+    private val chatService: ChatService,
+    private val redisTemplate: RedisTemplate<String, String>
 ) {
+    val username: String?
+        get() {
+            return redisTemplate.opsForValue().get("username")
+        }
 
     /**
      * 获取所有聊天3.5消息
      */
     @GetMapping("/messages")
-    fun getChat3Messages(): R<List<Chat3Message>> {
-        val messages = chat3MessageService.list() // 使用IService的list()方法获取所有消息
+    fun getChat3MessagesByUsername(): R<List<Chat3Message>> {
+        val queryWrapper = QueryWrapper<Chat3Message>()
+        queryWrapper.eq("username", username)
+        val messages = chat3MessageService.list(queryWrapper) // 根据 username 查询聊天记录
         return R.success(messages)
     }
     /**
@@ -29,9 +38,15 @@ class Chat3MessageController(
      */
     @PostMapping("/send")
     fun sendChat3Message(@RequestBody chatMessage: Chat3Message): R<String?> {
-        val response = chatService.chat(chatMessage, chat3MessageService.list().toJson(), 3)
-        chat3MessageService.save(chatMessage) // 使用IService的save()方法
-        chat3MessageService.save(response?.let { Chat3Message(null, chatMessage.time, it, "AI") })
+        val queryWrapper = QueryWrapper<Chat3Message>()
+        queryWrapper.eq("username", username)
+        val response = chatService.chat(chatMessage, chat3MessageService.list(queryWrapper).toJson(), 3)
+        response?.let { msg ->
+            println("username: $username")
+            Chat3Message(null, chatMessage.time, msg, "AI", username).also {
+                chat3MessageService.save(it)
+            }
+        }
         return R.success(response) // 返回成功响应
     }
 

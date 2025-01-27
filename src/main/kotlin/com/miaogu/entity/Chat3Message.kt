@@ -13,5 +13,6 @@ data class Chat3Message(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     override val time: Date,
     override val msg: String,
-    override val uid: String
+    override val uid: String,
+    override val username: String? = null
 ): ChatMessage, Serializable

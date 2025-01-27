@@ -133,4 +133,20 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
         val newKey = generateSecretKey()
         addSecretKey(newKey) // 添加新密钥并更新 Redis
     }
+
+    // 从 JWT 中获取用户名
+    fun getUsernameFromToken(token: String): String? {
+        return try {
+            // 从 JWT 中提取所有声明
+            val claims = extractAllClaims(token)
+            claims.subject // 返回用户名（subject）
+        } catch (e: Exception) {
+            println("Error extracting username from token: ${e.message}")
+            null // 如果发生异常，返回 null
+        }
+    }
+    // 获取最新的 secretKey
+    fun getLatestSecretKey(): String? {
+        return secretKeys.lastOrNull() // 返回最新的密钥，如果列表为空则返回 null
+    }
 }

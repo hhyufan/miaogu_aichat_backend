@@ -24,7 +24,9 @@ CREATE TABLE IF NOT EXISTS chat3_5_message (
                                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                                time DATETIME NOT NULL,
                                                msg TEXT NOT NULL,
-                                               uid VARCHAR(20) NOT NULL
+                                               uid VARCHAR(20) NOT NULL,
+                                               username VARCHAR(50) NOT NULL
+
 );
 
 -- 创建ChatGPT 4消息表
@@ -32,7 +34,8 @@ CREATE TABLE IF NOT EXISTS chat4_message (
                                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                              time DATETIME NOT NULL,
                                              msg TEXT NOT NULL,
-                                             uid VARCHAR(20) NOT NULL
+                                             uid VARCHAR(20) NOT NULL,
+                                             username VARCHAR(50) NOT NULL
 );
 
 -- 插入初始好友数据
