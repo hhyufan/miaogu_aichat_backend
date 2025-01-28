@@ -3,7 +3,8 @@ package com.miaogu.response
 data class R<T>(
     val code: Int,
     val msg: Map<String, String>? = null,
-    val data: T? = null
+    val data: T? = null,
+    var extra: Map<String, Any>? = null
 ) {
     companion object {
         fun <T> success(): R<T> {
@@ -42,4 +43,8 @@ data class R<T>(
             return R(ResponseCode.SUCCESS.code,  msg?.let { mapOf( it.first to it.second) }, data)
         }
     }
+    fun withExtra(extra: Map<String, String>): R<T> {
+        return this.copy(extra = extra)
+    }
+
 }

@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
-class UserController(private val userService: UserService, private val jwtService: JwtService) {
+class UserController(private val userService: UserService, private val jwtService: JwtService, ) {
     @Value("\${jwt.expire}")
     private val expirationTime: Long = 3600000 // 1小时
-
     @PostMapping("/login")
     @ResponseBody
     fun login(@RequestBody userDTO: UserDTO): R<UserDTO> {
@@ -58,5 +57,10 @@ class UserController(private val userService: UserService, private val jwtServic
         } else {
             return R.fail("error" to "无效的刷新令牌")
         }
+    }
+    @PostMapping("/token")
+    fun getToken(): R<Map<String, String?>> {
+        val token = jwtService.getTokenByUsername()
+        return R.success(mapOf("token" to token))
     }
 }

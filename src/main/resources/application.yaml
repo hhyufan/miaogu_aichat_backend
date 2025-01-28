@@ -29,7 +29,6 @@ spring:
   graphql:
     cors:
       allowed-origins: http://localhost:5173
-
 logging:
   level:
     root: info
@@ -37,6 +36,11 @@ logging:
 server:
   port: 8088
   address: 0.0.0.0
+  servlet:
+    encoding:
+      enabled: true
+      charset: UTF-8
+      force: true
 
 pagehelper:
   helper-dialect: mysql

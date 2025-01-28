@@ -1,5 +1,5 @@
 ### 全局token
-@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4MDI0MDM3LCJleHAiOjE3MzgwMjc2Mzd9.u1UpcQHXI53TzXwtOR-htIT29xzp09s-nx3io5dLj48
+@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4MDM0NTI3LCJleHAiOjE3MzgwMzgxMjd9.1T4lY_86lNiZOZVtYKVn5qKdCZFIJ2yJXAmspMopqP8
 @refreshToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4MDIyMjg4LCJleHAiOjE3MzgxMDg2ODh9.c1KHd9AtgyGqsbD0-BaI_9IJyoc4OLNIycfOGZEPNAch6-OCiCmVZ5naGCC9fuOaEueRJOCsuCx8aMK47C4d5Q
 ### 获取所有聊天3.5消息
 GET http://localhost:8088/1002/messages
@@ -71,3 +71,6 @@ Content-Type: application/json
   "username": "newUser",
   "refreshToken": "{{refreshToken}}"
 }
+
+### 刷新令牌请求
+POST http://localhost:8088/user/token

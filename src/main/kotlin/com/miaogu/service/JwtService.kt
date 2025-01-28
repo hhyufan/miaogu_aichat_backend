@@ -28,6 +28,8 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
     private val gson = Gson() // 创建 Gson 实例
     private val secretKeysKey = "jwt:secretKeys" // Redis 中存储密钥栈的键
     private val secretKeys = mutableListOf<String>() // 使用 List 存储密钥
+    private val isTokenUpdatedKey = "jwt:isTokenUpdated"
+    private var refreshCount = 0 // 用于跟踪刷新次数
 
     init {
         loadSecretKeysFromRedis() // 从 Redis 加载密钥栈
@@ -139,5 +141,28 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
     private fun refreshSecretKey() {
         val newKey = generateSecretKey()
         addSecretKey(newKey) // 添加新密钥并更新 Redis
+        refreshCount++ // 增加刷新计数
+        // 根据刷新次数设置 isTokenUpdated
+        if (refreshCount == 1) {
+            redisTemplate.opsForValue().set(isTokenUpdatedKey, false.toString())
+        } else {
+            redisTemplate.opsForValue().set(isTokenUpdatedKey, true.toString())
+        }
+
+        refreshAllTokens() // 刷新所有用户的 JWT Token
+    }
+
+    private fun refreshAllTokens() {
+        // 获取所有用户的 Token
+        val keys = redisTemplate.keys("jwt:token:*") // 获取所有 Token 的键
+        keys.forEach { key ->
+            val username = key.split(":").last() // 提取用户名
+            val token = generateToken(username) // 生成新的 Token
+            redisTemplate.opsForValue().set(key, token, expirationTime, TimeUnit.MILLISECONDS) // 更新 Redis 中的 Token
+        }
+    }
+
+    fun getTokenByUsername(): String? {
+        return redisTemplate.opsForValue().get("jwt:token:${redisTemplate.opsForValue().get("username")}")
     }
 }
