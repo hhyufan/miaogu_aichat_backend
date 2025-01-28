@@ -28,7 +28,7 @@ spring:
       max-wait: 6000
   graphql:
     cors:
-      allowed-origins: http://localhost:5173
+      allowed-origins: https://www.miaogu.top
 logging:
   level:
     root: info

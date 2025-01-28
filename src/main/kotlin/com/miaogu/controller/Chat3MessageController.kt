@@ -26,7 +26,7 @@ class Chat3MessageController(
     /**
      * 获取所有聊天3.5消息
      */
-    @GetMapping("/messages")
+    @PostMapping("/messages")
     fun getChat3MessagesByUsername(): R<List<Chat3Message>> {
         val queryWrapper = QueryWrapper<Chat3Message>()
         queryWrapper.eq("username", username)
@@ -44,7 +44,7 @@ class Chat3MessageController(
         chat3MessageService.save(chatMessage)
         val response = chatService.chat(chatMessage, chat3MessageService.list(queryWrapper).toJson(), 3)
         response?.let { msg ->
-            Chat3Message(null, chatMessage.time, msg, "AI", username).also {
+            Chat3Message(null, chatMessage.time, msg, "AI", chatMessage.username).also {
                 chat3MessageService.save(it)
             }
         }

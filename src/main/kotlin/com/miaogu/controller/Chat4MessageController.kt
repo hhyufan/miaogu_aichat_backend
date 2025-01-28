@@ -26,11 +26,11 @@ class Chat4MessageController(
     /**
      * 获取所有聊天3.5消息
      */
-    @GetMapping("/messages")
+    @PostMapping("/messages")
     fun getChat3Messages(): R<List<Chat4Message>> {
-        val queryWrapper = QueryWrapper<Chat3Message>()
+        val queryWrapper = QueryWrapper<Chat4Message>()
         queryWrapper.eq("username", username)
-        val messages = chat4MessageService.list() // 使用IService的list()方法获取所有消息
+        val messages = chat4MessageService.list(queryWrapper) // 使用IService的list()方法获取所有消息
         return R.success(messages)
     }
     /**
@@ -42,10 +42,9 @@ class Chat4MessageController(
         queryWrapper.eq("username", username)
         chatMessage.username = username
         chat4MessageService.save(chatMessage)
-        Chat3Message(null, chatMessage.time, chatMessage.msg, "User", username)
         val response = chatService.chat(chatMessage, chat4MessageService.list(queryWrapper).toJson(), 3)
         response?.let { msg ->
-            Chat4Message(null, chatMessage.time, msg, "AI", username).also {
+            Chat4Message(null, chatMessage.time, msg, "AI", chatMessage.username).also {
                 chat4MessageService.save(it)
             }
         }

@@ -45,7 +45,7 @@ Accept: application/json
 Authorization: {{Authorization}}
 
 ### 用户登录
-POST http://localhost:8088/user/login
+POST https://a007-113-224-213-152.ngrok-free.app/user/login
 Content-Type: application/json
 
 {
