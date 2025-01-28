@@ -27,7 +27,6 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
 
     private val gson = Gson() // 创建 Gson 实例
     private val secretKeysKey = "jwt:secretKeys" // Redis 中存储密钥栈的键
-
     private val secretKeys = mutableListOf<String>() // 使用 List 存储密钥
 
     init {
@@ -69,12 +68,16 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
         val claims: Claims = Jwts.claims().setSubject(username)
         val now = Date()
         val secretKey = secretKeys.lastOrNull() // 使用栈顶密钥
-        return Jwts.builder()
+        val token = Jwts.builder()
             .setClaims(claims)
             .setIssuedAt(now)
             .setExpiration(Date(now.time + expirationTime))
             .signWith(SignatureAlgorithm.HS256, secretKey) // 使用栈顶密钥
             .compact()
+
+        // 将生成的 Token 存储到 Redis 中
+        redisTemplate.opsForValue().set("jwt:token:$username", token, expirationTime, TimeUnit.MILLISECONDS)
+        return token
     }
 
     fun generateRefreshToken(username: String): String {
@@ -99,13 +102,17 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
     fun validateToken(token: String, username: String): Boolean {
         return try {
             val claims = extractAllClaims(token)
-            claims.subject == username && !isTokenExpired(claims)
+            claims.subject == username && !isTokenExpired(claims) && checkTokenInRedis(username, token)
         } catch (e: Exception) {
             println("JWT Validation Error: ${e.message}") // 捕获并打印异常
             false
         }
     }
 
+    private fun checkTokenInRedis(username: String, token: String): Boolean {
+        val storedToken = redisTemplate.opsForValue().get("jwt:token:$username")
+        return storedToken == token
+    }
     private fun isTokenExpired(claims: Claims): Boolean {
         return claims.expiration.before(Date())
     }
@@ -132,21 +139,5 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
     private fun refreshSecretKey() {
         val newKey = generateSecretKey()
         addSecretKey(newKey) // 添加新密钥并更新 Redis
-    }
-
-    // 从 JWT 中获取用户名
-    fun getUsernameFromToken(token: String): String? {
-        return try {
-            // 从 JWT 中提取所有声明
-            val claims = extractAllClaims(token)
-            claims.subject // 返回用户名（subject）
-        } catch (e: Exception) {
-            println("Error extracting username from token: ${e.message}")
-            null // 如果发生异常，返回 null
-        }
-    }
-    // 获取最新的 secretKey
-    fun getLatestSecretKey(): String? {
-        return secretKeys.lastOrNull() // 返回最新的密钥，如果列表为空则返回 null
     }
 }
