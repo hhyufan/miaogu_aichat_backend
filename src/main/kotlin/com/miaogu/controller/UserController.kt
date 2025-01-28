@@ -3,6 +3,7 @@ package com.miaogu.controller
 import com.miaogu.dto.RefreshTokenDTO
 import com.miaogu.service.UserService
 import com.miaogu.dto.UserDTO
+import com.miaogu.dto.UserResponseDTO
 import com.miaogu.response.R
 import com.miaogu.service.JwtService
 import org.springframework.beans.factory.annotation.Value
@@ -15,34 +16,43 @@ class UserController(private val userService: UserService, private val jwtServic
     private val expirationTime: Long = 3600000 // 1小时
     @PostMapping("/login")
     @ResponseBody
-    fun login(@RequestBody userDTO: UserDTO): R<UserDTO> {
+    fun login(@RequestBody userDTO: UserDTO): R<UserResponseDTO> {
         val user = userDTO.toEntity()
         val loginPair = userService.login(user)
         val refreshToken = jwtService.generateRefreshToken(userDTO.username)
+        val userResponseDTO = UserResponseDTO(
+            username = userDTO.username.takeIf { it.isNotBlank() },
+            email = userDTO.email?.takeIf { it.isNotBlank() }
+        )
         if (loginPair.first == "error") {
-            return R.fail("error" to loginPair.second, userDTO)
+            return R.fail("error" to loginPair.second, userResponseDTO)
         }
+
         return R.success(mapOf(
             "refreshToken" to refreshToken,
             "token" to loginPair.second,
             "expiresIn" to expirationTime.toString()
-        ), userDTO)
+        ), userResponseDTO)
     }
 
     @PostMapping("/register")
     @ResponseBody
-    fun register(@RequestBody userDTO: UserDTO): R<UserDTO>  {
+    fun register(@RequestBody userDTO: UserDTO): R<UserResponseDTO>  {
         val user = userDTO.toEntity()
         val refreshToken = jwtService.generateRefreshToken(userDTO.username)
         val registerPair = userService.register(user)
+        val userResponseDTO = UserResponseDTO(
+            username = userDTO.username,
+            email = userDTO.email
+        )
         if (registerPair.first == "error") {
-            return R.fail("error" to registerPair.second, userDTO)
+            return R.fail("error" to registerPair.second, userResponseDTO)
         }
         return R.success( mapOf(
             "token" to registerPair.second,
             "refreshToken" to refreshToken,
             "expiresIn" to expirationTime.toString()
-        ), userDTO)
+        ), userResponseDTO )
     }
     @PostMapping("/refresh")
     fun refresh(@RequestBody refreshTokenDTO: RefreshTokenDTO): R<out Map<String, Any>> {
