@@ -2,6 +2,7 @@ package com.miaogu.service
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.miaogu.exception.JwtValidationException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -127,7 +128,7 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
                 // Continue to the next key
             }
         }
-        throw Exception("JWT signature does not match") // All keys failed
+        throw JwtValidationException("JWT 签名不匹配。") // All keys failed
     }
 
     fun extractUsername(token: String): String {

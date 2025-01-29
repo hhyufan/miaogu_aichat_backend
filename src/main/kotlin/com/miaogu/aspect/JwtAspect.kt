@@ -1,5 +1,6 @@
 package com.miaogu.aspect
 
+import com.miaogu.exception.JwtValidationException
 import com.miaogu.response.ApiResponse
 import com.miaogu.service.JwtService
 import org.aspectj.lang.ProceedingJoinPoint
@@ -32,30 +33,45 @@ class JwtAspect @Autowired constructor(
      */
     @Around("@within(com.miaogu.annotation.RequireJwt) || @annotation(com.miaogu.annotation.RequireJwt)")
     fun checkJwt(joinPoint: ProceedingJoinPoint): Any? {
-        val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
+
+        val requestAttributes = RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes
+            ?: throw IllegalStateException("无法获取请求上下文")
+
         val request = requestAttributes.request
 
-        val authorizationHeader = request.getHeader("Authorization")
-            ?: throw RuntimeException("缺少或无效的 JWT")
+        val authorizationHeader = request.getHeader("Authorization")?.takeIf { it.isNotBlank() }
+            ?: throw JwtValidationException("缺少授权凭证")
 
-        if (!authorizationHeader.startsWith("Bearer ")) {
-            throw RuntimeException("缺少或无效的 JWT")
+        val (type, token) = authorizationHeader.split(" ").takeIf { it.size == 2 }
+            ?: throw JwtValidationException("无效的令牌格式")
+
+        if (type != "Bearer") {
+            throw JwtValidationException("不支持的认证类型")
         }
 
-        val token = authorizationHeader.substring(7)
-        val username = jwtService.extractUsername(token)
+        val username = try {
+            jwtService.extractUsername(token)
+        } catch (_: JwtValidationException) {
+            throw JwtValidationException("令牌无效")
+        }
 
         if (!jwtService.validateToken(token, username)) {
-            throw RuntimeException("无效的 JWT")
+            throw JwtValidationException("令牌已失效")
         }
 
         redisTemplate.opsForValue().set("username", username, refreshExpiration, TimeUnit.MILLISECONDS)
 
-        val result = joinPoint.proceed() as ApiResponse<*>
-        result.extra = mapOf(
-            "username" to username,
-            "isTokenUpdated" to redisTemplate.opsForValue().get("jwt:isTokenUpdated").toString()
-        )
-        return result
+        // 安全处理响应
+        return when (val result = joinPoint.proceed()) {
+            is ApiResponse<*> -> {
+                result.apply {
+                    extra = buildMap {
+                        put("username", username)
+                        put("isTokenUpdated", redisTemplate.opsForValue().get("jwt:isTokenUpdated") ?: "false")
+                    }
+                }
+            }
+            else -> result
+        }
     }
 }
