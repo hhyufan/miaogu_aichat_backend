@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ApiResponse<T>(
-   val httpStatus: Number,
+   val code: Number,
    val msg: String? = null,
    val data: T? = null,
    var extra: Map<String, Any>? = null
