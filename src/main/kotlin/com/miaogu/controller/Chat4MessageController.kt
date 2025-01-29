@@ -30,8 +30,8 @@ class Chat4MessageController(
     fun getChat3Messages(): R<List<Chat4Message>> {
         val queryWrapper = QueryWrapper<Chat4Message>()
         queryWrapper.eq("username", username)
-        val messages = chat4MessageService.list(queryWrapper) // 使用IService的list()方法获取所有消息
-        return R.success(messages)
+        val data = chat4MessageService.list(queryWrapper) // 使用IService的list()方法获取所有消息
+        return R.success(data)
     }
     /**
      * 发送聊天3.5消息

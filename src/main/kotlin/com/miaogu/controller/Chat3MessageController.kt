@@ -30,8 +30,8 @@ class Chat3MessageController(
     fun getChat3MessagesByUsername(): R<List<Chat3Message>> {
         val queryWrapper = QueryWrapper<Chat3Message>()
         queryWrapper.eq("username", username)
-        val messages = chat3MessageService.list(queryWrapper) // 根据 username 查询聊天记录
-        return R.success(messages)
+        val data = chat3MessageService.list(queryWrapper) // 根据 username 查询聊天记录
+        return R.success(data)
     }
     /**
      * 发送聊天3.5消息

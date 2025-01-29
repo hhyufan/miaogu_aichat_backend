@@ -17,7 +17,7 @@ class FriendController(
     @RequireJwt // 需要进行 JWT 验证
     @PostMapping("/friendList")
     fun friendList(): R<MutableList<Friend>> {
-        val messages = friendService.list() // 使用IService的list()方法获取所有消息
-        return R.success(messages)
+        val data = friendService.list() // 使用IService的list()方法获取所有消息
+        return R.success(data)
     }
 }
