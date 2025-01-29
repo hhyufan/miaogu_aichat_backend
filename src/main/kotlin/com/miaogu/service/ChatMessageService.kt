@@ -18,7 +18,7 @@ class ChatMessageService(
             return redisTemplate.opsForValue().get("username")
         }
     @CacheEvict(value = ["chat3Messages", "chat4Messages"], allEntries = true) // 清空相关缓存
-    fun clearChatMessages(): Pair<String, String>? {
+    fun clearChatMessages(): String {
         val chatMsgSum = countChatMessages()
         // 直接调用 MyBatis-Plus 的删除方法清空表
         val chat3QueryWrapper = QueryWrapper<Chat3Message>()
@@ -27,7 +27,7 @@ class ChatMessageService(
         chat4QueryWrapper.eq("username", username)
         chat4MessageService.remove(chat4QueryWrapper)
         chat3MessageService.remove(chat3QueryWrapper)
-        return "success" to "清空聊天记录成功！共清除了${chatMsgSum}条记录！"
+        return "清空聊天记录成功！共清除了${chatMsgSum}条记录！"
     }
 
     private fun countChatMessages(): Long {

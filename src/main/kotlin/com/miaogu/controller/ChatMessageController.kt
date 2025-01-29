@@ -1,8 +1,9 @@
 package com.miaogu.controller
 
 import com.miaogu.annotation.RequireJwt
-import com.miaogu.response.R
+import com.miaogu.response.ApiResponse
 import com.miaogu.service.ChatMessageService
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -14,7 +15,7 @@ class ChatMessageController(
     private val chatMessageService: ChatMessageService
 ) {
     @DeleteMapping("/clear")
-    fun clearChatMessages(): R<Pair<String, String>?> {
-        return R.success(chatMessageService.clearChatMessages(), null)
+    fun clearChatMessages(): ApiResponse<Pair<String, String>?> {
+        return ApiResponse(HttpStatus.NO_CONTENT, chatMessageService.clearChatMessages())
     }
 }

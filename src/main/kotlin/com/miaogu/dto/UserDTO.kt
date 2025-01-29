@@ -1,19 +1,12 @@
 package com.miaogu.dto
 
-import com.miaogu.entity.User
+import com.fasterxml.jackson.annotation.JsonInclude
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class UserDTO(
-    val username: String = "",
+    val username: String? = "",
     val password: String? = "",
     val email: String? = ""
 ) {
-    fun toEntity(): User {
-        return User(
-            username = username,
-            email = email,
-            password = password
-        )
-    }
-
-    constructor(username: String, password: String) : this(username, "", password)
+    constructor(username: String?, email: String?) : this(username = username, email = email, password = "")
 }

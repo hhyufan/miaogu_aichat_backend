@@ -2,13 +2,13 @@ package com.miaogu.controller
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.miaogu.annotation.RequireJwt
-import com.miaogu.entity.Chat3Message
 import com.miaogu.entity.Chat4Message
 import com.miaogu.extension.toJson
-import com.miaogu.response.R
+import com.miaogu.response.ApiResponse
 import com.miaogu.service.Chat4MessageService
 import com.miaogu.service.ChatService
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -20,41 +20,33 @@ class Chat4MessageController(
     private val redisTemplate: RedisTemplate<String, String>
 ) {
     val username: String?
-        get() {
-            return redisTemplate.opsForValue().get("username")
-        }
+        get() = redisTemplate.opsForValue().get("username")
     /**
-     * 获取所有聊天3.5消息
+     * 获取所有聊天4.0消息
      */
     @PostMapping("/messages")
-    fun getChat3Messages(): R<List<Chat4Message>> {
-        val queryWrapper = QueryWrapper<Chat4Message>()
-        queryWrapper.eq("username", username)
-        val data = chat4MessageService.list(queryWrapper) // 使用IService的list()方法获取所有消息
-        return R.success(data)
+    fun getChat4Messages(): ApiResponse<List<Chat4Message>> {
+        val data = chat4MessageService.list(QueryWrapper<Chat4Message>().eq("username", username))
+        return ApiResponse(HttpStatus.OK, data = data)
     }
+
     /**
-     * 发送聊天3.5消息
+     * 发送聊天4.0消息
      */
     @PostMapping("/send")
-    fun sendChat4Message(@RequestBody chatMessage: Chat4Message): R<String?> {
-        val queryWrapper = QueryWrapper<Chat4Message>()
-        queryWrapper.eq("username", username)
+    fun sendChat4Message(@RequestBody chatMessage: Chat4Message): ApiResponse<String?> {
         chatMessage.username = username
         chat4MessageService.save(chatMessage)
-        val response = chatService.chat(chatMessage, chat4MessageService.list(queryWrapper).toJson(), 3)
+        val response = chatService.chat(chatMessage, chat4MessageService.list(QueryWrapper<Chat4Message>().eq("username", username)).toJson(), 3)
         response?.let { msg ->
-            Chat4Message(null, chatMessage.time, msg, "AI", chatMessage.username).also {
-                chat4MessageService.save(it)
-            }
+            chat4MessageService.save(Chat4Message(null, chatMessage.time, msg, "AI", chatMessage.username))
         }
-        return R.success(response) // 返回成功响应
+        return ApiResponse(HttpStatus.OK, data = response)
     }
 
     @PostMapping("/response")
-    fun responseChat3Message(@RequestBody chatMessage: Chat4Message): R<Void> {
-
-        chat4MessageService.save(chatMessage) // 使用IService的save()方法
-        return R.success() // 返回成功响应
+    fun responseChat3Message(@RequestBody chatMessage: Chat4Message): ApiResponse<Void> {
+        chat4MessageService.save(chatMessage)
+        return ApiResponse(HttpStatus.OK)
     }
 }

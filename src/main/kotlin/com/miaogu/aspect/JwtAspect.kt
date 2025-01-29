@@ -1,6 +1,6 @@
 package com.miaogu.aspect
 
-import com.miaogu.response.R
+import com.miaogu.response.ApiResponse
 import com.miaogu.service.JwtService
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -14,9 +14,12 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.util.concurrent.TimeUnit
 
+/**
+ * JWT 相关的切面处理类
+ */
 @Aspect
 @Component
-@RequestScope // 确保每个请求都有自己的实例
+@RequestScope
 class JwtAspect @Autowired constructor(
     private val jwtService: JwtService,
     private val redisTemplate: RedisTemplate<String, String>
@@ -24,41 +27,35 @@ class JwtAspect @Autowired constructor(
     @Value("\${jwt.refresh-expire}")
     private val refreshExpiration: Long = 86400000 // 1天
 
+    /**
+     * 检查 JWT 的有效性
+     */
     @Around("@within(com.miaogu.annotation.RequireJwt) || @annotation(com.miaogu.annotation.RequireJwt)")
     fun checkJwt(joinPoint: ProceedingJoinPoint): Any? {
-        // 获取当前请求的 HttpServletRequest 和 HttpServletResponse
         val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
         val request = requestAttributes.request
 
-        // 获取 Authorization 头
         val authorizationHeader = request.getHeader("Authorization")
+            ?: throw RuntimeException("缺少或无效的 JWT")
 
-        // 验证 JWT
-        if (authorizationHeader.isNullOrEmpty() || !authorizationHeader.startsWith("Bearer ")) {
+        if (!authorizationHeader.startsWith("Bearer ")) {
             throw RuntimeException("缺少或无效的 JWT")
         }
 
-        val token = authorizationHeader.substring(7) // 去掉 "Bearer " 前缀
+        val token = authorizationHeader.substring(7)
         val username = jwtService.extractUsername(token)
 
         if (!jwtService.validateToken(token, username)) {
             throw RuntimeException("无效的 JWT")
         }
 
-        // 存储用户名到 Redis
         redisTemplate.opsForValue().set("username", username, refreshExpiration, TimeUnit.MILLISECONDS)
 
-        // 执行目标方法
-        val result = joinPoint.proceed()
-
-        val extraInfo = mapOf(
+        val result = joinPoint.proceed() as ApiResponse<*>
+        result.extra = mapOf(
             "username" to username,
             "isTokenUpdated" to redisTemplate.opsForValue().get("jwt:isTokenUpdated").toString()
         )
-
-        if (result is R<*>) {
-            return result.withExtra(extraInfo)
-        }
-        return result // 如果没有响应对象，则返回原始结果
+        return result
     }
 }

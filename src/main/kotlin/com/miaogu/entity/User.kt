@@ -5,18 +5,10 @@ import com.miaogu.dto.UserDTO
 
 @TableName("user")
 data class User(
-    val username: String = "",
-    val email: String? = "",
-    var password: String? = ""
+    val username: String? = null,
+    val email: String? = null,
+    var password: String? = null
 
 ) {
-    fun toDTO() : UserDTO {
-        return UserDTO(
-            username = this.username,
-            password = this.password,
-            email = this.email
-        )
-    }
-
-    constructor(username: String, password: String) : this(username, "", password)
+    constructor(username: String, password: String) : this(username, null, password)
 }
