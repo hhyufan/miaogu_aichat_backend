@@ -3,6 +3,7 @@ package com.miaogu.service
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.miaogu.entity.Chat3Message
 import com.miaogu.entity.Chat4Message
+import com.miaogu.enums.RestoreStatus
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
@@ -21,12 +22,10 @@ class ChatMessageService(
     fun clearChatMessages(): String {
         val chatMsgSum = countChatMessages()
         // 直接调用 MyBatis-Plus 的删除方法清空表
-        val chat3QueryWrapper = QueryWrapper<Chat3Message>()
-        val chat4QueryWrapper = QueryWrapper<Chat4Message>()
-        chat3QueryWrapper.eq("username", username)
-        chat4QueryWrapper.eq("username", username)
-        chat4MessageService.remove(chat4QueryWrapper)
-        chat3MessageService.remove(chat3QueryWrapper)
+        username?.let {
+            chat4MessageService.clearWithVersion(it)
+            chat3MessageService.clearWithVersion(it)
+        }
         return "清空聊天记录成功！共清除了${chatMsgSum}条记录！"
     }
 
@@ -38,5 +37,19 @@ class ChatMessageService(
         val chat3Counter =  chat3MessageService.count(chat3QueryWrapper)
         val chat4Counter = chat4MessageService.count(chat4QueryWrapper)
         return chat3Counter + chat4Counter
+    }
+
+    fun revertVersion(): RestoreStatus {
+        val chat3Status = chat3MessageService.restoreVersion(username!!)
+        val chat4Status = chat4MessageService.restoreVersion(username!!)
+        return when {
+            chat3Status == RestoreStatus.NO_HISTORY && chat4Status == RestoreStatus.NO_HISTORY -> RestoreStatus.NO_HISTORY
+
+            RestoreStatus.UPDATE_FAILED in listOf(chat3Status, chat4Status) -> RestoreStatus.UPDATE_FAILED
+
+            RestoreStatus.SUCCESS in listOf(chat3Status, chat4Status) -> RestoreStatus.SUCCESS
+
+            else -> RestoreStatus.UPDATE_FAILED
+        }
     }
 }

@@ -36,6 +36,7 @@ class Chat4MessageController(
     @PostMapping("/send")
     fun sendChat4Message(@RequestBody chatMessage: Chat4Message): ApiResponse<String?> {
         chatMessage.username = username
+        chatMessage.deleteVersion = 0
         chat4MessageService.save(chatMessage)
         val response = chatService.chat(chatMessage, chat4MessageService.list(QueryWrapper<Chat4Message>().eq("username", username)).toJson(), 3)
         response?.let { msg ->

@@ -37,6 +37,7 @@ class Chat3MessageController(
     @PostMapping("/send")
     fun sendChat3Message(@RequestBody chatMessage: Chat3Message): ApiResponse<String?> {
         chatMessage.username = username
+        chatMessage.deleteVersion = 0
         chat3MessageService.save(chatMessage)
         val response = chatService.chat(chatMessage, chat3MessageService.list(QueryWrapper<Chat3Message>().eq("username", username)).toJson(), 3)
         response?.let { msg ->

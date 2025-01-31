@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS chat3_5_message (
                                                time DATETIME NOT NULL,
                                                msg TEXT NOT NULL,
                                                uid VARCHAR(20) NOT NULL,
-                                               username VARCHAR(50) NOT NULL
+                                               username VARCHAR(50) NOT NULL,
+                                               delete_version INT DEFAULT 0 NOT NULL
 
 );
 
@@ -35,7 +36,8 @@ CREATE TABLE IF NOT EXISTS chat4_message (
                                              time DATETIME NOT NULL,
                                              msg TEXT NOT NULL,
                                              uid VARCHAR(20) NOT NULL,
-                                             username VARCHAR(50) NOT NULL
+                                             username VARCHAR(50) NOT NULL,
+                                             delete_version INT DEFAULT 0 NOT NULL
 );
 
 -- 插入初始好友数据
@@ -43,3 +45,7 @@ INSERT IGNORE INTO friend (id, name, detail) VALUES
                                                     ('1001', 'baka幼犬酱', 'ChatGPT User'),
                                                     ('1002', '日富美', 'ChatGPT3.5'),
                                                     ('1003', '白州梓', 'ChatGPT4o-mini');
+# ALTER TABLE chat3_5_message
+#     ADD COLUMN delete_version INT DEFAULT 0 NOT NULL COMMENT '删除版本号（0=未删除）';
+# ALTER TABLE chat4_message
+#     ADD COLUMN delete_version INT DEFAULT 0 NOT NULL COMMENT '删除版本号（0=未删除）';

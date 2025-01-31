@@ -29,7 +29,8 @@ CREATE TABLE  chat3_5_message (
                                                time DATETIME NOT NULL,
                                                msg TEXT NOT NULL,
                                                uid VARCHAR(20) NOT NULL,
-                                               username VARCHAR(50) NOT NULL
+                                               username VARCHAR(50) NOT NULL,
+                                               delete_version INT DEFAULT 0 NOT NULL
 );
 
 -- 创建ChatGPT 4消息表
@@ -38,7 +39,8 @@ CREATE TABLE chat4_message (
                                              time DATETIME NOT NULL,
                                              msg TEXT NOT NULL,
                                              uid VARCHAR(20) NOT NULL,
-                                             username VARCHAR(50) NOT NULL
+                                             username VARCHAR(50) NOT NULL,
+                                             delete_version INT DEFAULT 0 NOT NULL
 );
 
 -- 插入初始好友数据

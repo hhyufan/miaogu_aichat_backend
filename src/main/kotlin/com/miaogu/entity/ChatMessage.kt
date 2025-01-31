@@ -8,4 +8,5 @@ interface ChatMessage {
     val msg: String
     val uid: String
     var username: String?
+    var deleteVersion: Int?
 }

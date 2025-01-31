@@ -1,5 +1,5 @@
 ### 全局token
-@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4MTkxNzE3LCJleHAiOjE3MzgxOTUzMTd9.4fo886JAM2lwGZMuNZTBsXhtuggZAu3G9R15eBWePpA
+@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4MzIwNDIxLCJleHAiOjE3MzgzMjQwMjF9.om8ElUoMdTa4ibSf6UaZ_EIOrzHCBxQQS57h_PLJp8c
 @refreshToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4MDIyMjg4LCJleHAiOjE3MzgxMDg2ODh9.c1KHd9AtgyGqsbD0-BaI_9IJyoc4OLNIycfOGZEPNAch6-OCiCmVZ5naGCC9fuOaEueRJOCsuCx8aMK47C4d5Q
 ### 获取所有聊天3.5消息
 POST http://localhost:8088/1002/messages
@@ -39,6 +39,11 @@ DELETE http://localhost:8088/chat/clear
 Accept: application/json
 Authorization: {{Authorization}}
 
+### 聊天记录恢复
+POST http://localhost:8088/chat/revert
+Accept: application/json
+Authorization: {{Authorization}}
+
 ### 获取好友列表
 POST http://localhost:8088/friend/friendList
 Accept: application/json
@@ -72,8 +77,10 @@ Content-Type: application/json
   "refreshToken": "{{refreshToken}}"
 }
 
-### 刷新令牌请求
+### 获取新的token
 POST http://localhost:8088/user/token
+
+
 
 #### Groq API Chat Completion Request
 #POST https://api.groq.com/openai/v1/chat/completions
