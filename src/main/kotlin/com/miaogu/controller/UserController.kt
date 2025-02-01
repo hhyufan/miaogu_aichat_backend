@@ -32,16 +32,25 @@ class UserController(private val userService: UserService, private val jwtServic
             return ApiResponse(authPair.first, authPair.second)
         }
 
-        val token = user.username?.let { jwtService.generateToken(it) }
-        val refreshToken = user.username?.let { jwtService.generateRefreshToken(it) }
+        // 明确处理 completedUser 为 null 的情况
+        val completedUser = userService.getCompleteUser(user)
+            ?: return ApiResponse(HttpStatus.NOT_FOUND, "User not found")
+
+        // 确保 user.username 非空（根据业务逻辑）
+        val username = completedUser.username
+            ?: return ApiResponse(HttpStatus.BAD_REQUEST, "Username is missing")
+
+        // 生成 token 和 refreshToken
+        val token = jwtService.generateToken(username)
+        val refreshToken = jwtService.generateRefreshToken(username)
 
         val data = mapOf(
             "refreshToken" to refreshToken,
             "token" to token,
             "expiresIn" to expirationTime.toString(),
             "user" to UserDTO(
-                username = user.username,
-                email = user.email,
+                username = completedUser.username,
+                email = completedUser.email
             )
         )
         return ApiResponse(authPair.first, authPair.second, data)

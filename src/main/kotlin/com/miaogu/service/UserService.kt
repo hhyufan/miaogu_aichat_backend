@@ -7,4 +7,5 @@ import org.springframework.http.HttpStatus
 interface UserService : IService<User?> {
     fun login(user: User?): Pair<HttpStatus, String?>
     fun register(user: User?): Pair<HttpStatus, String?>
+    fun getCompleteUser(user: User?): User?
 }

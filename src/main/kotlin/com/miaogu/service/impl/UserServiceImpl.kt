@@ -9,6 +9,7 @@ import com.miaogu.mapper.UserMapper
 import com.miaogu.service.PasswordService
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserServiceImpl(
@@ -65,5 +66,20 @@ class UserServiceImpl(
 
         // 如果用户名和邮箱都不存在
         return HttpStatus.BAD_REQUEST to "用户名或邮箱不存在"
+    }
+
+    @Transactional
+    override fun getCompleteUser(user: User?): User? {
+        val queryWrapper = QueryWrapper<User>()
+
+        user?.username?.takeIf { it.isNotEmpty() }?.let {
+            queryWrapper.eq("username", it).or()
+        }
+
+        user?.email?.takeIf { it.isNotEmpty() }?.let {
+            queryWrapper.eq("email", it)
+        }
+        queryWrapper.last("LIMIT 1")
+        return this.getOne(queryWrapper)
     }
 }
