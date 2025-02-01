@@ -80,7 +80,9 @@ Content-Type: application/json
 ### 获取新的token
 POST http://localhost:8088/user/token
 
+### 获取GitHub收藏数
 
+POST http://localhost:8088/github/stars
 
 #### Groq API Chat Completion Request
 #POST https://api.groq.com/openai/v1/chat/completions
