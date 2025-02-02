@@ -1,27 +1,76 @@
 package com.miaogu.config
 
+import com.miaogu.filter.JwtAuthenticationFilter
+import com.miaogu.handler.JwtAccessDeniedHandler
+import com.miaogu.point.JwtAuthenticationEntryPoint
+import com.miaogu.service.JwtService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
-class SecurityConfig {
-
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true) // 启用方法级安全控制
+class SecurityConfig(
+    private val jwtService: JwtService
+) {
     @Bean
-    fun passwordEncoder(): BCryptPasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+    fun passwordEncoder(): BCryptPasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .csrf { csrf -> csrf.disable() } // 禁用 CSRF 保护
-            .authorizeHttpRequests { authz ->
-                authz.anyRequest().permitAll() // 允许所有请求
+            .csrf { it.disable() } // 仅针对无状态API禁用CSRF
+            .cors { it.configurationSource(corsConfigurationSource()) } // 配置CORS
+            .authorizeHttpRequests { auth ->
+                auth.requestMatchers(
+                    "/user/login",
+                    "/user/register",
+                    "/github/**",
+                    "/error"
+                ).permitAll()
+                    .anyRequest().authenticated()
             }
+            .sessionManagement {
+                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .addFilterBefore(
+                JwtAuthenticationFilter(jwtService),
+                UsernamePasswordAuthenticationFilter::class.java
+            )
+            .exceptionHandling {
+                it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
+                it.accessDeniedHandler(JwtAccessDeniedHandler())
+            }
+            .headers {
+                it.httpStrictTransportSecurity { hsts ->
+                    hsts.includeSubDomains(true)
+                        .maxAgeInSeconds(31536000) // 1年HSTS
+                }
+            }
+        return http.build()
+    }
 
-        return http.build() // 构建 SecurityFilterChain
+    private fun corsConfigurationSource(): CorsConfigurationSource {
+        val config = CorsConfiguration().apply {
+            allowedOrigins = listOf("https://www.miaogu.top", "http://localhost:5173")
+            allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            allowedHeaders = listOf("*")
+            allowCredentials = true
+            maxAge = 3600L
+        }
+        return UrlBasedCorsConfigurationSource().apply {
+            registerCorsConfiguration("/**", config)
+        }
     }
 }
+

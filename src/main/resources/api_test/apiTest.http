@@ -1,5 +1,5 @@
 ### 全局token
-@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4MzkzOTQ5LCJleHAiOjE3MzgzOTc1NDl9.0uMZFAf1K83TuEmmOv_76lged4U2vt2kHeRFnQgMafw
+@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NDU2MDEyLCJleHAiOjE3Mzg0NTk2MTJ9.iFpLaCg_yePtVujBmrsO9tUw9mmsOIEbyFLEWcptIyA
 @refreshToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4MDIyMjg4LCJleHAiOjE3MzgxMDg2ODh9.c1KHd9AtgyGqsbD0-BaI_9IJyoc4OLNIycfOGZEPNAch6-OCiCmVZ5naGCC9fuOaEueRJOCsuCx8aMK47C4d5Q
 ### 获取所有聊天3.5消息
 POST http://localhost:8088/1002/messages

@@ -4,12 +4,15 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.miaogu.exception.JwtValidationException
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import java.security.SecureRandom
+import java.security.SignatureException
 import java.util.Base64
 import java.util.Date
 import java.util.concurrent.Executors
@@ -128,7 +131,7 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
                 // Continue to the next key
             }
         }
-        throw JwtValidationException("JWT 签名不匹配。") // All keys failed
+        throw Exception("JWT signature does not match") // All keys failed
     }
 
     fun extractUsername(token: String): String {
@@ -165,5 +168,27 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
 
     fun getTokenByUsername(): String? {
         return redisTemplate.opsForValue().get("jwt:token:${redisTemplate.opsForValue().get("username")}")
+    }
+
+    fun getTokenExpiration(token: String): Date {
+        return extractAllClaims(token).expiration
+    }
+
+    fun refreshToken(oldToken: String): String {
+        val username = extractUsername(oldToken)
+        invalidateToken(oldToken) // 使旧令牌失效
+        return generateToken(username)
+    }
+
+    private fun invalidateToken(token: String) {
+        val expiration = getTokenExpiration(token).time - System.currentTimeMillis()
+        if (expiration > 0) {
+            redisTemplate.opsForValue().set(
+                "jwt:invalidated:$token",
+                "invalid",
+                expiration,
+                TimeUnit.MILLISECONDS
+            )
+        }
     }
 }
