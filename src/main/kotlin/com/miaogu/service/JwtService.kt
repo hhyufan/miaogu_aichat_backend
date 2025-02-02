@@ -2,17 +2,14 @@ package com.miaogu.service
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.miaogu.exception.JwtValidationException
 import io.jsonwebtoken.Claims
-import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.SignatureAlgorithm
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import java.security.SecureRandom
-import java.security.SignatureException
 import java.util.Base64
 import java.util.Date
 import java.util.concurrent.Executors
@@ -20,7 +17,10 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 @Service
-class JwtService(private val redisTemplate: StringRedisTemplate) {
+class JwtService(
+    @Qualifier("stringRedisTemplate")
+    private val redisTemplate: StringRedisTemplate
+) {
     private val scheduler: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
     @Value("\${jwt.expire}")
     private val expirationTime: Long = 3600000 // 1小时

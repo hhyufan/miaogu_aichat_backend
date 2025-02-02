@@ -1,5 +1,5 @@
 ### 全局token
-@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NDc1OTQ2LCJleHAiOjE3Mzg0Nzk1NDZ9.IzFZr4sBu0Jnb65vVw-ZHieYL4i1g1bUk9777Gpu3Ng
+@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NDg2NzI0LCJleHAiOjE3Mzg0OTAzMjR9.DJ-P2QZlDhvzpNBFlg76ReBS5njoZie_6X2rl3ssIQ4
 @refreshToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NDc1OTQ2LCJleHAiOjE3Mzg1NjIzNDZ9.-ePx4i5lLYbVOsQKsYsQJedDklku1udNuJw1XSxcvxIa7nN_W44IQ6E3yQUaAx3o-2IFwepVJ3uHhILHZ8iAoA
 ### 获取所有聊天3.5消息
 POST http://localhost:8088/1002/messages
@@ -49,13 +49,22 @@ POST http://localhost:8088/friend/friendList
 Accept: application/json
 Authorization: {{Authorization}}
 
-### 用户登录
+### 用户登录(newUser)
 POST https://a007-113-224-213-152.ngrok-free.app/user/login
 Content-Type: application/json
 
 {
   "username": "newUser",
   "password": "@newPassword123"
+}
+
+### 用户登录(hhyufan)
+POST https://a007-113-224-213-152.ngrok-free.app/user/login
+Content-Type: application/json
+
+{
+  "username": "hhyufan",
+  "password": "@Mimo521"
 }
 
 ### 用户注册
@@ -81,8 +90,8 @@ Authorization: {{Authorization}}
 ### 获取新的token
 POST http://localhost:8088/user/token
 Authorization: {{Authorization}}
-### 获取GitHub收藏数
 
+### 获取GitHub收藏数
 POST http://localhost:8088/github/stars
 
 #### Groq API Chat Completion Request

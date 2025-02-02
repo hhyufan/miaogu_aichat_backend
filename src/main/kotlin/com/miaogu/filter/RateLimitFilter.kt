@@ -8,10 +8,11 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.http.HttpStatus
-import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
+
 @Component
 class RateLimitFilter(
     private val redisTemplate: StringRedisTemplate
@@ -31,8 +32,7 @@ class RateLimitFilter(
         if (request.servletPath == "/user/login") {
             val ip = wrappedRequest.remoteAddr
             val requestBody: User = wrappedRequest.reader.use(BufferedReader::readText).fromJsonToObject()
-            println("Request Body: $requestBody")
-            val key = "login:attempts:$ip"
+            val key = "login:attempts:$ip-${requestBody.username}"
 
             val attempts = redisTemplate.opsForValue().increment(key) ?: 0
             if (attempts == 1L) {
