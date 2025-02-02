@@ -57,3 +57,6 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     type-aliases-package: com.miaogu.entity
 debug: true
+
+rate-limit:
+  max-attempts: 5
