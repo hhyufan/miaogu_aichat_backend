@@ -80,7 +80,7 @@ class JwtService(
             .setExpiration(Date(now.time + expirationTime))
             .signWith(SignatureAlgorithm.HS256, secretKey) // 使用栈顶密钥
             .compact()
-
+        println("Generated JWT: $token")
         // 将生成的 Token 存储到 Redis 中
         redisTemplate.opsForValue().set("jwt:token:$username", token, expirationTime, TimeUnit.MILLISECONDS)
         return token
@@ -192,7 +192,10 @@ class JwtService(
             )
         }
     }
-
+    fun logout(username: String) {
+        val token = redisTemplate.opsForValue().get("jwt:token:$username")
+        token?.let { invalidateToken(it) }
+    }
     fun isTokenBlacklisted(token: String): Boolean {
         return redisTemplate.hasKey("jwt:invalidated:$token")
     }

@@ -7,12 +7,18 @@ import com.miaogu.entity.User
 import com.miaogu.response.ApiResponse
 import com.miaogu.service.JwtService
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
-class UserController(private val userService: UserService, private val jwtService: JwtService ) {
+class UserController(private val userService: UserService,
+                     private val jwtService: JwtService,
+                     private val redisTemplate: RedisTemplate<String, String>) {
+    private val username: String?
+        get() = redisTemplate.opsForValue().get("username")
+
     @Value("\${jwt.expire}")
     private val expirationTime: Long = 3600000 // 1小时
 
@@ -25,6 +31,12 @@ class UserController(private val userService: UserService, private val jwtServic
     @PostMapping("/register")
     fun register(@RequestBody user: User): ApiResponse<Map<String, Any?>> {
         return handleUserAuthentication(user, userService.register(user))
+    }
+
+    @PostMapping("/logout")
+    fun logout(): ApiResponse<Map<String, Any?>> {
+        username?.let { jwtService.logout(it) }
+        return ApiResponse(HttpStatus.OK, "Logout successful")
     }
 
     private fun handleUserAuthentication(user: User, authPair: Pair<HttpStatus, String?>): ApiResponse<Map<String, Any?>> {

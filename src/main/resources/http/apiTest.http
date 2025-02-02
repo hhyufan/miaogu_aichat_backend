@@ -1,5 +1,5 @@
 ### 全局token
-@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NDg2NzI0LCJleHAiOjE3Mzg0OTAzMjR9.DJ-P2QZlDhvzpNBFlg76ReBS5njoZie_6X2rl3ssIQ4
+@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NTAwMjAwLCJleHAiOjE3Mzg1MDM4MDB9.wkfUn68TmHQ8i-j5jjaCer098KaOs-BY6h9mhbsfGJo
 @refreshToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NDc1OTQ2LCJleHAiOjE3Mzg1NjIzNDZ9.-ePx4i5lLYbVOsQKsYsQJedDklku1udNuJw1XSxcvxIa7nN_W44IQ6E3yQUaAx3o-2IFwepVJ3uHhILHZ8iAoA
 ### 获取所有聊天3.5消息
 POST http://localhost:8088/1002/messages
@@ -66,6 +66,11 @@ Content-Type: application/json
   "username": "hhyufan",
   "password": "@Mimo521"
 }
+
+### 用户登出
+POST http://localhost:8088/user/logout
+Accept: application/json
+Authorization: {{Authorization}}
 
 ### 用户注册
 POST http://localhost:8088/user/register
