@@ -48,10 +48,10 @@ class SecurityConfig(
                 JwtAuthenticationFilter(jwtService),
                 UsernamePasswordAuthenticationFilter::class.java
             )
-//            .exceptionHandling {
-//                it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
-//                it.accessDeniedHandler(JwtAccessDeniedHandler())
-//            }
+            .exceptionHandling {
+                it.authenticationEntryPoint(JwtAuthenticationEntryPoint())
+                it.accessDeniedHandler(JwtAccessDeniedHandler())
+            }
             .headers {
                 it.httpStrictTransportSecurity { hsts ->
                     hsts.includeSubDomains(true)
