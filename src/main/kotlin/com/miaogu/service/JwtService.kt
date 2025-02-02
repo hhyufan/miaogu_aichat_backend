@@ -107,6 +107,7 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
 
     fun validateToken(token: String, username: String): Boolean {
         return try {
+            if (isTokenBlacklisted(token)) return false // 检查黑名单
             val claims = extractAllClaims(token)
             claims.subject == username && !isTokenExpired(claims) && checkTokenInRedis(username, token)
         } catch (e: Exception) {
@@ -190,5 +191,9 @@ class JwtService(private val redisTemplate: StringRedisTemplate) {
                 TimeUnit.MILLISECONDS
             )
         }
+    }
+
+    fun isTokenBlacklisted(token: String): Boolean {
+        return redisTemplate.hasKey("jwt:invalidated:$token")
     }
 }
