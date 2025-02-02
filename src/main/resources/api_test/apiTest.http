@@ -1,6 +1,6 @@
 ### 全局token
-@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NDU2MDEyLCJleHAiOjE3Mzg0NTk2MTJ9.iFpLaCg_yePtVujBmrsO9tUw9mmsOIEbyFLEWcptIyA
-@refreshToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4MDIyMjg4LCJleHAiOjE3MzgxMDg2ODh9.c1KHd9AtgyGqsbD0-BaI_9IJyoc4OLNIycfOGZEPNAch6-OCiCmVZ5naGCC9fuOaEueRJOCsuCx8aMK47C4d5Q
+@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NDc1OTQ2LCJleHAiOjE3Mzg0Nzk1NDZ9.IzFZr4sBu0Jnb65vVw-ZHieYL4i1g1bUk9777Gpu3Ng
+@refreshToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NDc1OTQ2LCJleHAiOjE3Mzg1NjIzNDZ9.-ePx4i5lLYbVOsQKsYsQJedDklku1udNuJw1XSxcvxIa7nN_W44IQ6E3yQUaAx3o-2IFwepVJ3uHhILHZ8iAoA
 ### 获取所有聊天3.5消息
 POST http://localhost:8088/1002/messages
 Accept: application/json
@@ -71,6 +71,7 @@ Content-Type: application/json
 ### 刷新令牌请求
 POST http://localhost:8088/user/refresh
 Content-Type: application/json
+Authorization: {{Authorization}}
 
 {
   "username": "newUser",
@@ -79,7 +80,7 @@ Content-Type: application/json
 
 ### 获取新的token
 POST http://localhost:8088/user/token
-
+Authorization: {{Authorization}}
 ### 获取GitHub收藏数
 
 POST http://localhost:8088/github/stars

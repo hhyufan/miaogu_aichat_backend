@@ -3,7 +3,7 @@ package com.miaogu.service
 import com.miaogu.entity.Chat3Message
 import com.miaogu.entity.Chat4Message
 import com.miaogu.entity.ChatMessage
-import com.miaogu.extension.fromJson
+import com.miaogu.extension.fromMessageJson
 import com.miaogu.extension.toJson
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.ChatClient.PromptUserSpec
@@ -24,9 +24,9 @@ class ChatService @Autowired constructor(model: ChatModel){
             4 -> "gpt-4o-mini"
             else -> "gpt-3.5-turbo"
         }
-        val historyMessage: MutableList<ChatMessage> = if (model == 3) chatHistory.fromJson<Chat3Message>() else chatHistory.fromJson<Chat4Message>()
+
+        val historyMessage: MutableList<ChatMessage> = if (model == 3) chatHistory.fromMessageJson<Chat3Message>() else chatHistory.fromMessageJson<Chat4Message>()
         // 将用户消息添加到聊天记录中
-        historyMessage.add(message)
         val userMessage = message.msg + "\n后面内容作为附加聊天记录，不是当前要回答的内容：" + historyMessage.toJson()
         val responseFlux = chatClient.prompt()
             .options(OpenAiChatOptions.builder().model(modelName).build())
