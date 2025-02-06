@@ -2,6 +2,7 @@ package com.miaogu.controller
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.miaogu.annotation.RequireJwt
+import com.miaogu.entity.Chat4Message
 import com.miaogu.entity.DeepSeekMessage
 import com.miaogu.response.ApiResponse
 import com.miaogu.response.DeepSeekResponse
@@ -29,6 +30,12 @@ class DeepSeekController(
     @Value("\${deepseek.api.key}")
     private lateinit var deepSeekApiKey: String
     private val restTemplate = RestTemplate()
+
+    @PostMapping("/messages")
+    fun getMessages(): ApiResponse<List<DeepSeekMessage>> {
+        val data = deepSeekService.list(QueryWrapper<DeepSeekMessage>().eq("username", username))
+        return ApiResponse(HttpStatus.OK, data = data)
+    }
     @PostMapping("/send")
     fun sendMessage(@RequestBody message: DeepSeekMessage): ApiResponse<String> {
         val deepSeekMessages = mutableListOf(DeepSeekMessage(role = "system", content = "你是一个AI助手，我叫${username}。请根据用户输入的指令进行回答."))

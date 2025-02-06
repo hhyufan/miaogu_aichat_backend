@@ -27,7 +27,7 @@ class ChatService @Autowired constructor(model: ChatModel){
 
         val historyMessage: MutableList<ChatMessage> = if (model == 3) chatHistory.fromMessageJson<Chat3Message>() else chatHistory.fromMessageJson<Chat4Message>()
         // 将用户消息添加到聊天记录中
-        val userMessage = message.msg + "\n后面内容作为附加聊天记录，不是当前要回答的内容：" + historyMessage.toJson()
+        val userMessage = message.content + "\n后面内容作为附加聊天记录，不是当前要回答的内容：" + historyMessage.toJson()
         val responseFlux = chatClient.prompt()
             .options(OpenAiChatOptions.builder().model(modelName).build())
             .user { u: PromptUserSpec -> u.text(userMessage) }

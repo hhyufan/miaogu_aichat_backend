@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class FriendServiceImpl : ServiceImpl<FriendMapper, Friend>(), FriendService {
-    @Cacheable(value = ["friends"]) // 缓存好友列表
+    @Cacheable(value = ["friend"]) // 缓存好友列表
     override fun list(): List<Friend> {
         // 从数据库获取好友列表
         return super<ServiceImpl>.list()

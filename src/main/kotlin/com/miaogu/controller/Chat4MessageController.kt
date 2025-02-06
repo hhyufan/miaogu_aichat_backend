@@ -39,8 +39,8 @@ class Chat4MessageController(
         chatMessage.deleteVersion = 0
         chat4MessageService.save(chatMessage)
         val response = chatService.chat(chatMessage, chat4MessageService.list(QueryWrapper<Chat4Message>().eq("username", username)).toJson(), 3)
-        response?.let { msg ->
-            chat4MessageService.save(Chat4Message(null, chatMessage.time, msg, "AI", chatMessage.username))
+        response?.let { content ->
+            chat4MessageService.save(Chat4Message(null, chatMessage.time, content, "AI", chatMessage.username))
         }
         return ApiResponse(HttpStatus.OK, data = response)
     }

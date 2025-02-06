@@ -27,8 +27,8 @@ CREATE TABLE friend (
 CREATE TABLE  chat3_5_message (
                                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                                time DATETIME NOT NULL,
-                                               msg TEXT NOT NULL,
-                                               uid VARCHAR(20) NOT NULL,
+                                               content TEXT NOT NULL,
+                                               role VARCHAR(20) NOT NULL,
                                                username VARCHAR(50) NOT NULL,
                                                delete_version INT DEFAULT 0 NOT NULL
 );
@@ -37,8 +37,8 @@ CREATE TABLE  chat3_5_message (
 CREATE TABLE chat4_message (
                                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                              time DATETIME NOT NULL,
-                                             msg TEXT NOT NULL,
-                                             uid VARCHAR(20) NOT NULL,
+                                             content TEXT NOT NULL,
+                                             role VARCHAR(20) NOT NULL,
                                              username VARCHAR(50) NOT NULL,
                                              delete_version INT DEFAULT 0 NOT NULL
 );
@@ -50,11 +50,11 @@ INSERT INTO friend (id, name, detail) VALUES
                                                     ('1003', '白州梓', 'ChatGPT4o-mini');
 
 -- 插入初始聊天记录（ChatGPT 3.5）
-INSERT INTO chat3_5_message (time, msg, uid, username) VALUES
+INSERT INTO chat3_5_message (time, content, role, username) VALUES
                                                  ('2023-01-01 09:12:00', '在吗？', '1001', 'newUser'),
                                                  ('2023-01-01 09:12:00', '怎么了？', '1002', 'newUser');
 
 -- 插入初始聊天记录（ChatGPT 4）
-INSERT INTO chat4_message (time, msg, uid, username) VALUES
+INSERT INTO chat4_message (time, content, role, username) VALUES
                                                ('2023-01-01 09:12:00', '在干嘛呢', '1001', 'newUser'),
                                                ('2023-01-01 09:12:00', '吃饭', '1002', 'newUser');
