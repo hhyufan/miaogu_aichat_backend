@@ -1,15 +1,37 @@
 package com.miaogu.service.impl
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper
 import com.baomidou.mybatisplus.core.toolkit.Wrappers
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
 import com.miaogu.entity.DeepSeekMessage
 import com.miaogu.enums.RestoreStatus
 import com.miaogu.mapper.DeepSeekMessageMapper
 import com.miaogu.service.DeepSeekService
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
 class DeepSeekServiceImpl : ServiceImpl<DeepSeekMessageMapper, DeepSeekMessage>(), DeepSeekService{
+    @CacheEvict(value = ["deepSeekMessages", "deepSeekMessagesCount"], allEntries = true) // 清空缓存
+    override fun remove(queryWrapper: Wrapper<DeepSeekMessage>): Boolean {
+        return super<ServiceImpl>.remove(queryWrapper)
+    }
+
+    @Cacheable(value = ["deepSeekMessages"]) // 缓存聊天消息列表
+    override fun list(): MutableList<DeepSeekMessage> {
+        return super<ServiceImpl>.list()
+    }
+
+    @CacheEvict(value = ["deepSeekMessages"], allEntries = true) // 清空缓存
+    override fun save(entity: DeepSeekMessage): Boolean {
+        return super<ServiceImpl>.save(entity)
+    }
+
+    @Cacheable(value = ["deepSeekMessagesCount"], key = "'deepSeekMessagesCount'") // 缓存计数结果
+    override fun count(queryWrapper: Wrapper<DeepSeekMessage>): Long {
+        return super<ServiceImpl>.count(queryWrapper)
+    }
 
     override fun clearWithVersion(username: String): Boolean {
         // 获取当前最大版本号
