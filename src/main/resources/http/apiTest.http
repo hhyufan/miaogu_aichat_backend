@@ -1,11 +1,10 @@
 ### 全局token
-@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NTAwMjAwLCJleHAiOjE3Mzg1MDM4MDB9.wkfUn68TmHQ8i-j5jjaCer098KaOs-BY6h9mhbsfGJo
+@Authorization = Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4ODUxMzY2LCJleHAiOjE3Mzg4NTQ5NjZ9.HGNQ2n3prApzC66M3Kk4rAs1guh2f6zIOZOEVpyQcLk
 @refreshToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzM4NDc1OTQ2LCJleHAiOjE3Mzg1NjIzNDZ9.-ePx4i5lLYbVOsQKsYsQJedDklku1udNuJw1XSxcvxIa7nN_W44IQ6E3yQUaAx3o-2IFwepVJ3uHhILHZ8iAoA
 ### 获取所有聊天3.5消息
 POST http://localhost:8088/1002/messages
 Accept: application/json
 Authorization: {{Authorization}}
-
 ### 发送聊天3.5消息
 POST http://localhost:8088/1002/send
 Content-Type: application/json
@@ -13,7 +12,7 @@ Authorization: {{Authorization}}
 
 {
   "time": "2023-01-01 10:00:00",
-  "msg": "Hi, this is a test message!",
+  "msg": "写一份kt代码",
   "uid": "User"
 }
 
@@ -34,6 +33,17 @@ Authorization: {{Authorization}}
   "username": "newUser"
 }
 
+### 发送DeepSeek消息
+POST http://localhost:8088/1004/send
+Content-Type: application/json
+Authorization: {{Authorization}}
+
+{
+  "time": "2023-01-01 10:00:00",
+  "content": "不对!",
+  "role": "User",
+  "username": "newUser"
+}
 ### 清除聊天消息
 DELETE http://localhost:8088/chat/clear
 Accept: application/json
@@ -100,20 +110,20 @@ Authorization: {{Authorization}}
 POST http://localhost:8088/github/stars
 
 #### Groq API Chat Completion Request
-#POST https://api.groq.com/openai/v1/chat/completions
-#Content-Type: application/json
-#Authorization: Bearer
-#
-#{
-#  "model": "deepseek-r1-distill-llama-70b",
-#  "messages": [
-#    {
-#      "role": "system",
-#      "content": "你是一个经验丰富的全栈开发者，帮助我解决关于网页开发的问题。"
-#    },
-#    {
-#      "role": "user",
-#      "content": "在大型应用中，如何有效地管理组件状态，特别是在使用React、Vue或Angular等框架时？。"
-#    }
-#  ]
-#}
+POST https://api.deepseek.com/chat/completions
+Content-Type: application/json
+Authorization: Bearer
+
+{
+  "model": "deepseek-chat",
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是一个经验丰富的全栈开发者，帮助我解决关于网页开发的问题。"
+    },
+    {
+      "role": "user",
+      "content": "在大型应用中，如何有效地管理组件状态，特别是在使用React、Vue或Angular等框架时？。"
+    }
+  ]
+}

@@ -39,7 +39,14 @@ CREATE TABLE IF NOT EXISTS chat4_message (
                                              username VARCHAR(50) NOT NULL,
                                              delete_version INT DEFAULT 0 NOT NULL
 );
-
+CREATE TABLE IF NOT EXISTS deepSeek_message (
+                                             id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                             time DATETIME NOT NULL,
+                                             content TEXT NOT NULL,
+                                             role VARCHAR(20) NOT NULL,
+                                             username VARCHAR(50) NOT NULL,
+                                             delete_version INT DEFAULT 0 NOT NULL
+);
 -- 插入初始好友数据
 INSERT IGNORE INTO friend (id, name, detail) VALUES
                                                     ('1001', 'baka幼犬酱', 'ChatGPT User'),
