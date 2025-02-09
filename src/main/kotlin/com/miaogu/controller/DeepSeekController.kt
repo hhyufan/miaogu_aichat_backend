@@ -2,8 +2,8 @@ package com.miaogu.controller
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.miaogu.annotation.RequireJwt
-import com.miaogu.entity.Chat4Message
 import com.miaogu.entity.DeepSeekMessage
+import com.miaogu.request.MessageRequest
 import com.miaogu.response.ApiResponse
 import com.miaogu.response.DeepSeekResponse
 import com.miaogu.service.DeepSeekService
@@ -32,8 +32,17 @@ class DeepSeekController(
     private val restTemplate = RestTemplate()
 
     @PostMapping("/messages")
-    fun getMessages(): ApiResponse<List<DeepSeekMessage>> {
-        val data = deepSeekService.list(QueryWrapper<DeepSeekMessage>().eq("username", username))
+    fun getMessages(
+        @RequestBody request: MessageRequest // 使用请求体接收参数
+    ): ApiResponse<List<DeepSeekMessage>> {
+        val queryWrapper = QueryWrapper<DeepSeekMessage>()
+        queryWrapper.orderByDesc("id") // 按 id 降序排列
+
+        if (request.size != null) {
+            queryWrapper.last("LIMIT ${request.size} OFFSET ${request.offset ?: 0}") // 使用请求体中的分页大小和偏移量
+        }
+
+        val data = deepSeekService.list(queryWrapper.eq("username", username)).reversed()
         return ApiResponse(HttpStatus.OK, data = data)
     }
     @PostMapping("/send")
@@ -68,7 +77,7 @@ class DeepSeekController(
             deepSeekService.save(DeepSeekMessage(role = "assistant", content = aiResponse, username = username, time= message.time))
             ApiResponse(HttpStatus.OK, "Success", aiResponse)
         } else {
-            ApiResponse(response.statusCode.value(), "Failed to send message to DeepSeek API")
+            ApiResponse(HttpStatus.REQUEST_TIMEOUT, "Failed to send message to DeepSeek API")
         }
     }
 }

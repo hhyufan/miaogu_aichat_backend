@@ -3,7 +3,9 @@ package com.miaogu.controller
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.miaogu.annotation.RequireJwt
 import com.miaogu.entity.Chat4Message
+import com.miaogu.entity.DeepSeekMessage
 import com.miaogu.extension.toJson
+import com.miaogu.request.MessageRequest
 import com.miaogu.response.ApiResponse
 import com.miaogu.service.Chat4MessageService
 import com.miaogu.service.ChatService
@@ -24,9 +26,19 @@ class Chat4MessageController(
     /**
      * 获取所有聊天4.0消息
      */
+
     @PostMapping("/messages")
-    fun getChat4Messages(): ApiResponse<List<Chat4Message>> {
-        val data = chat4MessageService.list(QueryWrapper<Chat4Message>().eq("username", username))
+    fun getMessages(
+        @RequestBody request: MessageRequest // 使用请求体接收参数
+    ): ApiResponse<List<Chat4Message>> {
+        val queryWrapper = QueryWrapper<Chat4Message>()
+        queryWrapper.orderByDesc("id") // 按 id 降序排列
+
+        if (request.size != null) {
+            queryWrapper.last("LIMIT ${request.size} OFFSET ${request.offset ?: 0}") // 使用请求体中的分页大小和偏移量
+        }
+
+        val data = chat4MessageService.list(queryWrapper.eq("username", username)).reversed()
         return ApiResponse(HttpStatus.OK, data = data)
     }
 

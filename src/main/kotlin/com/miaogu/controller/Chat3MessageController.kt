@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.miaogu.annotation.RequireJwt
 import com.miaogu.entity.Chat3Message
 import com.miaogu.extension.toJson
+import com.miaogu.request.MessageRequest
 import com.miaogu.response.ApiResponse
 import com.miaogu.service.Chat3MessageService
 import com.miaogu.service.ChatService
@@ -21,13 +22,21 @@ class Chat3MessageController(
 ) {
     private val username: String?
         get() = redisTemplate.opsForValue().get("username")
-
     /**
      * 获取所有聊天3.5消息
      */
     @PostMapping("/messages")
-    fun getChat3MessagesByUsername(): ApiResponse<List<Chat3Message>> {
-        val data = chat3MessageService.list(QueryWrapper<Chat3Message>().eq("username", username))
+    fun getMessages(
+        @RequestBody request: MessageRequest // 使用请求体接收参数
+    ): ApiResponse<List<Chat3Message>> {
+        val queryWrapper = QueryWrapper<Chat3Message>()
+        queryWrapper.orderByDesc("id") // 按 id 降序排列
+
+        if (request.size != null) {
+            queryWrapper.last("LIMIT ${request.size} OFFSET ${request.offset ?: 0}") // 使用请求体中的分页大小和偏移量
+        }
+
+        val data = chat3MessageService.list(queryWrapper.eq("username", username)).reversed()
         return ApiResponse(HttpStatus.OK, data = data)
     }
 
