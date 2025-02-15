@@ -116,6 +116,9 @@ Authorization: {{Authorization}}
 ### 获取GitHub收藏数
 POST http://localhost:8088/github/stars
 
+### 获取 Edge Config
+GET http://localhost:8088/edge-config/api/config
+
 #### Groq API Chat Completion Request
 POST https://api.deepseek.com/chat/completions
 Content-Type: application/json

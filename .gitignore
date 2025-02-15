@@ -1,4 +1,5 @@
 HELP.md
+
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -34,3 +35,6 @@ build/
 
 ### OpenAI Config ###
 /src/main/resources/openai-config.yaml
+
+### PowerShell Env ###
+/src/main/resources/EnvVariables.psm1

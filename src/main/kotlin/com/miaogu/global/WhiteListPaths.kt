@@ -6,6 +6,7 @@ object WhiteListPaths {
         "/user/register",
         "/exceptions",
         "/error",
-        "/github"
+        "/github",
+        "/edge-config"
     )
 }

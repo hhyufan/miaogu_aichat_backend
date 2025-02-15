@@ -36,6 +36,7 @@ class SecurityConfig(
                     "/user/login",
                     "/user/register",
                     "/github/**",
+                    "/edge-config/**",
                     "/error",
                     "/exceptions/*",
                 ).permitAll()
