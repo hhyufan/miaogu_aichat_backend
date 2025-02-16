@@ -13,6 +13,8 @@ class PasswordService(private val passwordEncoder: BCryptPasswordEncoder) {
 
     // 验证密码
     fun matches(rawPassword: String, encodedPassword: String): Boolean {
+        println("rawPassword: $rawPassword")
+        println("encodedPassword: $encodedPassword")
         return passwordEncoder.matches(rawPassword, encodedPassword)
     }
 }

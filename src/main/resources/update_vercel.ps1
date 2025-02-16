@@ -31,6 +31,7 @@ do {
 # Extract URL
 $PUBLIC_URL = ($response.tunnels | Where-Object { $_.proto -eq 'https' })[0].public_url
 
+
 # Update Vercel Edge Config
 $uri = "https://api.vercel.com/v1/edge-config/$env:EDGE_CONFIG_ID/items"  # Use the Edge Config ID here
 $headers = @{
@@ -44,6 +45,11 @@ $body = @{
             operation = "upsert"
             key = "API_URL"
             value = $PUBLIC_URL
+        },
+        @{
+            operation = "upsert"
+            key="VUE_APP_AES_KEY"
+            value = $env:VUE_APP_AES_KEY
         }
     )
 } | ConvertTo-Json

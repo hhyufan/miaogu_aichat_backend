@@ -35,6 +35,7 @@ class SecurityConfig(
                 auth.requestMatchers(
                     "/user/login",
                     "/user/register",
+                    "/user/refresh",
                     "/github/**",
                     "/edge-config/**",
                     "/error",
@@ -64,7 +65,7 @@ class SecurityConfig(
 
     private fun corsConfigurationSource(): CorsConfigurationSource {
         val config = CorsConfiguration().apply {
-            allowedOrigins = listOf("https://www.miaogu.top", "http://localhost:5173")
+            allowedOrigins = listOf("https://www.miaogu.top", "http://localhost:5173", "http://localhost:5174")
             allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
             allowedHeaders = listOf("*")
             allowCredentials = true

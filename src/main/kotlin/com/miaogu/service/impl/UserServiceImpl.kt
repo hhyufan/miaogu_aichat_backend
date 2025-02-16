@@ -46,7 +46,6 @@ class UserServiceImpl(
         if (user == null || (user.username?.isEmpty() == true && user.email?.isEmpty() == true)) {
             return HttpStatus.BAD_REQUEST to "用户名或邮箱不能为空"
         }
-
         fun checkCredentials(userInfo: User?, password: String?): Pair<HttpStatus, String?> = when {
             userInfo == null -> HttpStatus.BAD_REQUEST to "用户名或邮箱不存在"
             !userInfo.password?.let { passwordService.matches(password ?: "", it) }!! -> HttpStatus.BAD_REQUEST to "密码错误" // 使用 PasswordService 验证密码

@@ -6,10 +6,13 @@ import com.miaogu.dto.UserDTO
 import com.miaogu.entity.User
 import com.miaogu.response.ApiResponse
 import com.miaogu.service.JwtService
+import com.miaogu.util.RSAUtils
+import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import kotlin.text.isNullOrEmpty
 
 @RestController
 @RequestMapping("/user")
@@ -18,19 +21,48 @@ class UserController(private val userService: UserService,
                      private val redisTemplate: RedisTemplate<String, String>) {
     private val username: String?
         get() = redisTemplate.opsForValue().get("username")
-
+    @Value("\${rsa.private-key}")
+    private val privateKey: String = ""
     @Value("\${jwt.expire}")
     private val expirationTime: Long = 3600000 // 1小时
-
+    private val logger: org.apache.logging.log4j.Logger? = LogManager.getLogger()
     @PostMapping("/login")
     @ResponseBody
-    fun login(@RequestBody user: User): ApiResponse<Map<String, Any?>> {
-        return handleUserAuthentication(user, userService.login(user))
+    fun login(@RequestBody request: Map<String, String>): ApiResponse<Map<String, Any?>> {
+        val username = request["username"]
+        val encryptedPassword = request["password"]
+
+        if (encryptedPassword.isNullOrEmpty()) {
+            return ApiResponse(HttpStatus.BAD_REQUEST, "密码不能为空")
+        }
+
+        try {
+            val decryptedPassword = RSAUtils.decrypt(encryptedPassword, privateKey)
+            val user = User(username, password = decryptedPassword)
+            return handleUserAuthentication(user, userService.login(user))
+        } catch (e: Exception) {
+            logger?.error("登录解密失败: ${e.message}")
+            return ApiResponse(HttpStatus.BAD_REQUEST, "密码解密失败")
+        }
     }
 
     @PostMapping("/register")
-    fun register(@RequestBody user: User): ApiResponse<Map<String, Any?>> {
-        return handleUserAuthentication(user, userService.register(user))
+    fun register(@RequestBody request: Map<String, String>): ApiResponse<Map<String, Any?>> {
+        val username = request["username"]
+        val encryptedPassword = request["password"]
+
+        if (encryptedPassword.isNullOrEmpty()) {
+            return ApiResponse(HttpStatus.BAD_REQUEST, "密码不能为空")
+        }
+
+        try {
+            val decryptedPassword = RSAUtils.decrypt(encryptedPassword, privateKey)
+            val user = User(username,password =  decryptedPassword)
+            return handleUserAuthentication(user, userService.login(user))
+        } catch (e: Exception) {
+            logger?.error("注册解密失败: ${e.message}")
+            return ApiResponse(HttpStatus.BAD_REQUEST, "密码解密失败")
+        }
     }
 
     @PostMapping("/logout")

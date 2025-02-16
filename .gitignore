@@ -38,3 +38,4 @@ build/
 
 ### PowerShell Env ###
 /src/main/resources/EnvVariables.psm1
+*.psm1
