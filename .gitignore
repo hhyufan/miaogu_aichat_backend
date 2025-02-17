@@ -37,5 +37,4 @@ build/
 /src/main/resources/openai-config.yaml
 
 ### PowerShell Env ###
-/src/main/resources/EnvVariables.psm1
-*.psm1
+src/main/resources/EnvVariables.psm1

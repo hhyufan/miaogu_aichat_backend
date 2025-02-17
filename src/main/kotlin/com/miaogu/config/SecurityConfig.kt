@@ -65,7 +65,11 @@ class SecurityConfig(
 
     private fun corsConfigurationSource(): CorsConfigurationSource {
         val config = CorsConfiguration().apply {
-            allowedOrigins = listOf("https://www.miaogu.top", "http://localhost:5173", "http://localhost:5174")
+            // 生成从 5173 到 5200 的端口列表
+            val allowedPorts = (5173..5200).map { "http://localhost:$it" }
+
+            // 将其他允许的源添加到列表中
+            allowedOrigins = listOf("https://www.miaogu.top") + allowedPorts
             allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
             allowedHeaders = listOf("*")
             allowCredentials = true
