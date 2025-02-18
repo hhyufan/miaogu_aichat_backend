@@ -58,7 +58,7 @@ class UserController(private val userService: UserService,
         try {
             val decryptedPassword = RSAUtils.decrypt(encryptedPassword, privateKey)
             val user = User(username,password =  decryptedPassword)
-            return handleUserAuthentication(user, userService.login(user))
+            return handleUserAuthentication(user, userService.register(user))
         } catch (e: Exception) {
             logger?.error("注册解密失败: ${e.message}")
             return ApiResponse(HttpStatus.BAD_REQUEST, "密码解密失败")
