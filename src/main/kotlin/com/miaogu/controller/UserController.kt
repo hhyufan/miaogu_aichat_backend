@@ -50,14 +50,15 @@ class UserController(private val userService: UserService,
     fun register(@RequestBody request: Map<String, String>): ApiResponse<Map<String, Any?>> {
         val username = request["username"]
         val encryptedPassword = request["password"]
-
+        val email = request["email"]
         if (encryptedPassword.isNullOrEmpty()) {
             return ApiResponse(HttpStatus.BAD_REQUEST, "密码不能为空")
         }
 
         try {
             val decryptedPassword = RSAUtils.decrypt(encryptedPassword, privateKey)
-            val user = User(username,password =  decryptedPassword)
+            println("password: $decryptedPassword")
+            val user = User(username, password =  decryptedPassword, email = email)
             return handleUserAuthentication(user, userService.register(user))
         } catch (e: Exception) {
             logger?.error("注册解密失败: ${e.message}")
