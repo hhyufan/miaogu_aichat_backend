@@ -7,7 +7,8 @@ Import-Module $modulePath -Force
 
 # Start ngrok and wait
 $ngrokPath = "C:\ngrok\ngrok.exe"  # Replace with the actual path
-Start-Process -FilePath $ngrokPath -ArgumentList "http 8088"
+$ngrokHttp = "C:\ngrok.yml"
+Start-Process $ngrokPath -ArgumentList "start", "--all", "--config", $ngrokHttp
 Start-Sleep -Seconds 5
 
 # Retry to get API information

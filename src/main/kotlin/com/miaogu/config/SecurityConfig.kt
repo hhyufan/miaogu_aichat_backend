@@ -4,6 +4,7 @@ import com.miaogu.filter.JwtAuthenticationFilter
 import com.miaogu.handler.JwtAccessDeniedHandler
 import com.miaogu.point.JwtAuthenticationEntryPoint
 import com.miaogu.service.JwtService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
@@ -23,8 +24,27 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 class SecurityConfig(
     private val jwtService: JwtService
 ) {
+    @Value("\${ngrok.ngrok-url}")
+    private var ngrokUrl: String = ""
     @Bean
     fun passwordEncoder(): BCryptPasswordEncoder = BCryptPasswordEncoder()
+
+    private fun corsConfigurationSource(): CorsConfigurationSource {
+        val config = CorsConfiguration().apply {
+            // 生成从 5173 到 5200 的端口列表
+            val allowedPorts = (5173..5200).map { "http://localhost:$it" }
+
+            // 将其他允许的源添加到列表中
+            allowedOrigins = listOf("https://www.miaogu.top", "https://app.miaogu.top", ngrokUrl) + allowedPorts
+            allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            allowedHeaders = listOf("*")
+            allowCredentials = true
+            maxAge = 3600L
+        }
+        return UrlBasedCorsConfigurationSource().apply {
+            registerCorsConfiguration("/**", config)
+        }
+    }
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -63,21 +83,6 @@ class SecurityConfig(
         return http.build()
     }
 
-    private fun corsConfigurationSource(): CorsConfigurationSource {
-        val config = CorsConfiguration().apply {
-            // 生成从 5173 到 5200 的端口列表
-            val allowedPorts = (5173..5200).map { "http://localhost:$it" }
 
-            // 将其他允许的源添加到列表中
-            allowedOrigins = listOf("https://www.miaogu.top") + allowedPorts
-            allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            allowedHeaders = listOf("*")
-            allowCredentials = true
-            maxAge = 3600L
-        }
-        return UrlBasedCorsConfigurationSource().apply {
-            registerCorsConfiguration("/**", config)
-        }
-    }
 }
 
