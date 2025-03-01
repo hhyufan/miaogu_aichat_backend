@@ -1,10 +1,12 @@
 package com.miaogu
 
 import org.springframework.boot.CommandLineRunner
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.support.EncodedResource
+import org.springframework.jdbc.core.ConnectionCallback
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.datasource.init.ScriptUtils
 import org.springframework.stereotype.Component
-import java.nio.file.Files
-import java.nio.file.Paths
 
 @Component
 class DatabaseInitializer(private val jdbcTemplate: JdbcTemplate) : CommandLineRunner {
@@ -14,14 +16,8 @@ class DatabaseInitializer(private val jdbcTemplate: JdbcTemplate) : CommandLineR
     }
 
     private fun initializeDatabase() {
-        val sqlFilePath = "src/main/resources/sql/init_data.sql" // SQL文件的路径
-        val sql = Files.readString(Paths.get(sqlFilePath))
-
-        // Execute the SQL script
-        sql.split(";").forEach {
-            if (it.isNotBlank()) {
-                jdbcTemplate.execute(it.trim())
-            }
-        }
+        jdbcTemplate.execute(ConnectionCallback {
+            ScriptUtils.executeSqlScript(it, EncodedResource(ClassPathResource("sql/init_data.sql"), "utf-8"))
+        })
     }
 }
