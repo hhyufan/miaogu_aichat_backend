@@ -35,7 +35,7 @@ class SecurityConfig(
             val allowedPorts = (5173..5200).map { "http://localhost:$it" }
 
             // 将其他允许的源添加到列表中
-            allowedOrigins = listOf("https://www.miaogu.top", "https://app.miaogu.top", ngrokUrl) + allowedPorts
+            allowedOrigins = listOf("https://www.miaogu.top", "https://app.miaogu.top", "https://api.miaogu.top", ngrokUrl) + allowedPorts
             allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
             allowedHeaders = listOf("*")
             allowCredentials = true
