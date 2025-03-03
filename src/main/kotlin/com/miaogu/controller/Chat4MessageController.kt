@@ -41,7 +41,18 @@ class Chat4MessageController(
         val data = chat4MessageService.list(queryWrapper.eq("username", username)).reversed()
         return ApiResponse(HttpStatus.OK, data = data)
     }
+    /**
+     * 获取所有聊天4.0消息
+     */
 
+    @PostMapping("/message")
+    fun getMessage(
+        @RequestBody request: MessageRequest // 使用请求体接收参数
+    ): ApiResponse<List<Chat4Message>> {
+        val data = chat4MessageService.list()
+        return ApiResponse(HttpStatus.OK, data = data)
+    }
+    
     /**
      * 发送聊天4.0消息
      */
