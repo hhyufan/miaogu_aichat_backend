@@ -76,7 +76,8 @@ Content-Type: application/json
 }
 
 ### 用户登录(hhyufan)
-POST https://51ac-175-167-146-48.ngrok-free.app/user/login
+POST https://api.miaogu.top/api/login
+
 Content-Type: application/json
 
 {

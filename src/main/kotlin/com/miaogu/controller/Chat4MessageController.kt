@@ -52,7 +52,7 @@ class Chat4MessageController(
         val data = chat4MessageService.list()
         return ApiResponse(HttpStatus.OK, data = data)
     }
-    
+
     /**
      * 发送聊天4.0消息
      */

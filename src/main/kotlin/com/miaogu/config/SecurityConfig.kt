@@ -31,11 +31,28 @@ class SecurityConfig(
 
     private fun corsConfigurationSource(): CorsConfigurationSource {
         val config = CorsConfiguration().apply {
-            // 生成从 5173 到 5200 的端口列表
-            val allowedPorts = (5173..5200).map { "http://localhost:$it" }
+            // 生成动态端口列表（开发环境）
+            val devPorts = (5173..5200).map { "http://localhost:$it" }
 
-            // 将其他允许的源添加到列表中
-            allowedOrigins = listOf("https://www.miaogu.top", "https://app.miaogu.top", "https://api.miaogu.top", ngrokUrl) + allowedPorts
+            // 配置动态域名模式（生产环境）
+            allowedOriginPatterns = mutableListOf<String>().apply {
+                // 固定域名
+                addAll(listOf(
+                    "https://www.miaogu.top",
+                    "https://app.miaogu.top",
+                    "https://api.miaogu.top",
+                    ngrokUrl  // 保留原有 ngrok 配置
+                ))
+
+                // 动态子域名模式（支持随机数）
+                add("https://miaogu-*-hhyufans-projects.vercel.app")
+                add("https://*.vercel.app")  // 兜底匹配所有 Vercel 子域名
+
+                // 开发端口
+                addAll(devPorts)
+            }
+
+            // 其他配置保持不变
             allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
             allowedHeaders = listOf("*")
             allowCredentials = true

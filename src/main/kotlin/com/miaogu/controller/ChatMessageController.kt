@@ -26,4 +26,5 @@ class ChatMessageController(
         val revertStatus = chatMessageService.revertVersion()
         return ApiResponse(revertStatus.status, revertStatus.template)
     }
+
 }
