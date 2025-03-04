@@ -41,6 +41,7 @@ class SecurityConfig(
                     "https://www.miaogu.top",
                     "https://app.miaogu.top",
                     "https://api.miaogu.top",
+                    "https://yuki.cmyam.net",
                     ngrokUrl  // 保留原有 ngrok 配置
                 ))
 
