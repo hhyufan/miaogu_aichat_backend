@@ -1,0 +1,13 @@
+deepseek:
+  api:
+    key: ""
+
+vercel:
+  access-token: ""
+  edge-config-id: ""
+
+github:
+  PAT: ""
+
+rsa:
+  private-key: ""
