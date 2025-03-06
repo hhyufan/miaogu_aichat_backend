@@ -3,8 +3,6 @@ spring:
     redis:
       host: 127.0.0.1
       port: 6379
-  config:
-    import: "optional:openai-config.yaml"
   ai:
     openai:
       base-url: https://api.openai.com/
