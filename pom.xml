@@ -6,14 +6,13 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.1</version>
-
 	</parent>
-
 
 	<modelVersion>4.0.0</modelVersion>
 
+	<groupId>com.miaogu</groupId>
 	<artifactId>aichat</artifactId>
-
+	<version>1.0.0</version>
 
 	<properties>
 		<kotlin.version>1.8.0</kotlin.version> <!-- 添加 Kotlin 版本 -->
