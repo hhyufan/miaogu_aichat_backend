@@ -73,9 +73,6 @@ class UserServiceImpl(
 
         user?.username?.takeIf { it.isNotEmpty() }?.let {
             queryWrapper.eq("username", it).or()
-        }
-
-        user?.email?.takeIf { it.isNotEmpty() }?.let {
             queryWrapper.eq("email", it)
         }
         queryWrapper.last("LIMIT 1")
