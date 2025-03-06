@@ -24,8 +24,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 class SecurityConfig(
     private val jwtService: JwtService
 ) {
-    @Value("\${ngrok.ngrok-url}")
-    private var ngrokUrl: String = ""
+    @Value("\${cors.additional-url:}")
+    private lateinit var additionalUrl: String
     @Bean
     fun passwordEncoder(): BCryptPasswordEncoder = BCryptPasswordEncoder()
 
@@ -42,7 +42,7 @@ class SecurityConfig(
                     "https://app.miaogu.top",
                     "https://api.miaogu.top",
                     "https://yuki.cmyam.net",
-                    ngrokUrl  // 保留原有 ngrok 配置
+                    additionalUrl  // 保留原有 ngrok 配置
                 ))
 
                 // 动态子域名模式（支持随机数）
