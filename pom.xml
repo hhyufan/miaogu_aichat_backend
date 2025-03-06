@@ -6,18 +6,20 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.1</version>
-
 	</parent>
-
 
 	<modelVersion>4.0.0</modelVersion>
 
-
-	<artifactId>ai</artifactId>
-
+	<groupId>com.miaogu</groupId>
+	<artifactId>aichat</artifactId>
+	<version>1.0.0</version>
 
 	<properties>
-		<kotlin.version>1.8.0</kotlin.version> <!-- 添加 Kotlin 版本 -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<kotlin.code.style>official</kotlin.code.style>
+		<kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
 	<dependencies>
 		<dependency>

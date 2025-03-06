@@ -27,15 +27,16 @@
 
 2. **配置数据库**
 
-   在`src/main/resources/application.yaml`中配置你的数据库连接信息：
+   在 `src/main/resources/application.yaml`（或在工作目录下创建 `application.yaml`）中配置你的数据库连接信息：
 
    ```
    spring:
      datasource:
-       url: jdbc:mysql://localhost:3306/miaogu_aichat?useSSL=false&serverTimezone=UTC
+       url: jdbc:mysql://localhost:3306/miaogu_aichat
        username: root
        password: root
    ```
+
 3. **启动redis服务**
 
    首先需要安装并运行 Redis 服务。
@@ -44,13 +45,16 @@
    redis-cli ping
    ```
    如果返回 PONG，则表示 Redis 服务已成功启动。
+
 4. **初始化数据库**
 
-   - 使用 `src/main/resources/sql/init_data.sql` 创建数据库和表（在MySQL命令行或数据库管理工具中执行）
-   - 启动Springboot时，会自动执行sql文件，创建数据库和表
+   - 确保 MySQL 已安装并运行，并创建数据库 `miaogu_aichat`。
+   - 使用 `others/sql/init_database.sql` 创建数据表（在MySQL命令行或数据库管理工具中执行）。
+   - 启动 SpringBoot 时，会自动执行 SQL 文件，创建数据表（需要将 `others/sql/init_database.sql` 放在工作目录下或者打包进 `resources`）。
 
 5. **AI 配置**
-   在`src/main/resources`中创建名为`openai-config.yaml`的配置文件，并配置你的OpenAI API域名以及密钥：
+
+   在 `src/main/resources/custom.yaml` 配置文件（或在工作目录下创建 `application.yaml`）中配置你的 OpenAI API 域名以及密钥：
    ```
    spring:
      ai:
