@@ -1,5 +1,6 @@
 package com.miaogu.controller
 
+import com.miaogu.context.UserContext
 import com.miaogu.dto.RefreshTokenDTO
 import com.miaogu.service.UserService
 import com.miaogu.dto.UserDTO
@@ -18,9 +19,9 @@ import kotlin.text.isNullOrEmpty
 @RequestMapping("/user")
 class UserController(private val userService: UserService,
                      private val jwtService: JwtService,
-                     private val redisTemplate: RedisTemplate<String, String>) {
+                     private val userContext: UserContext) {
     private val username: String?
-        get() = redisTemplate.opsForValue().get("username")
+        get() = userContext.username
     @Value("\${rsa.private-key}")
     private val privateKey: String = ""
     @Value("\${jwt.expire}")

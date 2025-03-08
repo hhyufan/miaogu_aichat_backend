@@ -2,14 +2,13 @@ package com.miaogu.controller
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.miaogu.annotation.RequireJwt
+import com.miaogu.context.UserContext
 import com.miaogu.entity.Chat4Message
-import com.miaogu.entity.DeepSeekMessage
 import com.miaogu.extension.toJson
 import com.miaogu.request.MessageRequest
 import com.miaogu.response.ApiResponse
 import com.miaogu.service.Chat4MessageService
 import com.miaogu.service.ChatService
-import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -19,10 +18,10 @@ import org.springframework.web.bind.annotation.*
 class Chat4MessageController(
     private val chat4MessageService: Chat4MessageService,
     private val chatService: ChatService,
-    private val redisTemplate: RedisTemplate<String, String>
+    private val userContext: UserContext
 ) {
     val username: String?
-        get() = redisTemplate.opsForValue().get("username")
+        get() = userContext.username
     /**
      * 获取所有聊天4.0消息
      */
@@ -47,7 +46,6 @@ class Chat4MessageController(
 
     @PostMapping("/message")
     fun getMessage(
-        @RequestBody request: MessageRequest // 使用请求体接收参数
     ): ApiResponse<List<Chat4Message>> {
         val data = chat4MessageService.list()
         return ApiResponse(HttpStatus.OK, data = data)

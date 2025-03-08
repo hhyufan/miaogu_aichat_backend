@@ -2,6 +2,7 @@ package com.miaogu.controller
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.miaogu.annotation.RequireJwt
+import com.miaogu.context.UserContext
 import com.miaogu.entity.DeepSeekMessage
 import com.miaogu.request.MessageRequest
 import com.miaogu.response.ApiResponse
@@ -23,10 +24,10 @@ import org.springframework.web.client.RestTemplate
 @RequireJwt
 class DeepSeekController(
     private val deepSeekService: DeepSeekService,
-    private val redisTemplate: RedisTemplate<String, String>
+    private val userContext: UserContext
 ) {
     val username: String?
-        get() = redisTemplate.opsForValue().get("username")
+        get() = userContext.username
     @Value("\${deepseek.api.key}")
     private lateinit var deepSeekApiKey: String
     private val restTemplate = RestTemplate()

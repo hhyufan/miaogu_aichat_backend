@@ -1,5 +1,6 @@
 package com.miaogu.aspect
 
+import com.miaogu.context.UserContext
 import com.miaogu.response.ApiResponse
 import com.miaogu.service.JwtService
 import org.aspectj.lang.ProceedingJoinPoint
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit
 @Component
 @RequestScope
 class JwtAspect @Autowired constructor(
+    private val userContext: UserContext,
     private val jwtService: JwtService,
     private val redisTemplate: RedisTemplate<String, String>
 ) {
@@ -42,6 +44,7 @@ class JwtAspect @Autowired constructor(
         val token = request.getHeader("Authorization")?.substringAfter("Bearer ")!!
 
         val username = jwtService.extractUsername(token)
+        userContext.username = username
         val currentToken = redisTemplate.opsForValue().get("jwt:current:$username")
         println("currentToken: $currentToken")
         redisTemplate.opsForValue().set("username", username, refreshExpiration, TimeUnit.MILLISECONDS)

@@ -2,6 +2,7 @@ package com.miaogu.controller
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.miaogu.annotation.RequireJwt
+import com.miaogu.context.UserContext
 import com.miaogu.entity.Chat3Message
 import com.miaogu.extension.toJson
 import com.miaogu.request.MessageRequest
@@ -18,10 +19,10 @@ import org.springframework.web.bind.annotation.*
 class Chat3MessageController(
     private val chat3MessageService: Chat3MessageService,
     private val chatService: ChatService,
-    private val redisTemplate: RedisTemplate<String, String>
+    private val userContext: UserContext
 ) {
     private val username: String?
-        get() = redisTemplate.opsForValue().get("username")
+        get() = userContext.username
     /**
      * 获取所有聊天3.5消息
      */
