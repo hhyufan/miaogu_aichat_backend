@@ -1,6 +1,6 @@
 spring:
   config:
-    import: "classpath:custom.yaml"
+    import: "classpath:openai-config.yaml"
   data:
     redis:
       host: 127.0.0.1

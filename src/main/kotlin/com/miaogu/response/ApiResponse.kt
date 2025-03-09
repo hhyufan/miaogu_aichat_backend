@@ -9,5 +9,6 @@ data class ApiResponse<T>(
    val data: T? = null,
    var extra: Map<String, Any>? = null
 ) {
-   constructor(httpStatus: HttpStatus, msg: String? = null, data: T? = null) : this(httpStatus.value(), msg ?: httpStatus.reasonPhrase, data)
+   constructor(httpStatus: HttpStatus, msg: String? = null, data: T? = null) : 
+       this(httpStatus.value(), msg ?: httpStatus.reasonPhrase, data)
 }

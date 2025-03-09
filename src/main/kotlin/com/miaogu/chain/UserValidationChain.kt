@@ -12,15 +12,14 @@ class UserValidationChain(target: UserMapper) {
     private val emailCheck = EmailFormatValidationHandler()
 
     init {
-        // 建立责任链 emailCheck: EmailFormatValidationHandler
-        usernameDuplicateCheck.setNext(emailDuplicateCheckHandler).setNext(emailCheck)
-
+        // 构建责任链
+        usernameDuplicateCheck
+            .setNext(emailDuplicateCheckHandler)
+            .setNext(emailCheck)
     }
 
-    fun validate(user: User): String? {
-
-        usernameDuplicateCheck.handle(user)
-        return usernameDuplicateCheck.currentError ?: emailDuplicateCheckHandler.currentError ?: emailCheck.currentError
-            // 如果没有错误，返回 null
-    }
+    fun validate(user: User): String? =
+        usernameDuplicateCheck.apply { handle(user) }.currentError
+            ?: emailDuplicateCheckHandler.currentError
+            ?: emailCheck.currentError
 }

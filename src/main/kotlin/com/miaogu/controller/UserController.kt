@@ -10,62 +10,56 @@ import com.miaogu.service.JwtService
 import com.miaogu.util.RSAUtils
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import kotlin.text.isNullOrEmpty
 
 @RestController
 @RequestMapping("/user")
-class UserController(private val userService: UserService,
-                     private val jwtService: JwtService,
-                     private val userContext: UserContext) {
-    private val username: String?
-        get() = userContext.username
+class UserController(
+    private val userService: UserService,
+    private val jwtService: JwtService,
+    private val userContext: UserContext
+) {
+    private val username get() = userContext.username
+
     @Value("\${rsa.private-key}")
     private val privateKey: String = ""
+
     @Value("\${jwt.expire}")
     private val expirationTime: Long = 3600000 // 1小时
-    private val logger: org.apache.logging.log4j.Logger? = LogManager.getLogger()
+
+    private val logger = LogManager.getLogger()
+
     @PostMapping("/login")
     @ResponseBody
-    fun login(@RequestBody request: Map<String, String>): ApiResponse<Map<String, Any?>> {
-        val username = request["username"]
-        val encryptedPassword = request["password"]
-
-        if (encryptedPassword.isNullOrEmpty()) {
-            return ApiResponse(HttpStatus.BAD_REQUEST, "密码不能为空")
-        }
-
-        try {
-            val decryptedPassword = RSAUtils.decrypt(encryptedPassword, privateKey)
-            val user = User(username, password = decryptedPassword)
-            return handleUserAuthentication(user, userService.login(user))
-        } catch (e: Exception) {
-            logger?.error("登录解密失败: ${e.message}")
-            return ApiResponse(HttpStatus.BAD_REQUEST, "密码解密失败")
-        }
-    }
+    fun login(@RequestBody request: Map<String, String>): ApiResponse<Map<String, Any?>> =
+        request["password"]?.let { encryptedPassword ->
+            try {
+                val decryptedPassword = RSAUtils.decrypt(encryptedPassword, privateKey)
+                val user = User(request["username"], password = decryptedPassword)
+                handleUserAuthentication(user, userService.login(user))
+            } catch (e: Exception) {
+                logger.error("登录解密失败: ${e.message}")
+                ApiResponse(HttpStatus.BAD_REQUEST, "密码解密失败")
+            }
+        } ?: ApiResponse(HttpStatus.BAD_REQUEST, "密码不能为空")
 
     @PostMapping("/register")
-    fun register(@RequestBody request: Map<String, String>): ApiResponse<Map<String, Any?>> {
-        val username = request["username"]
-        val encryptedPassword = request["password"]
-        val email = request["email"]
-        if (encryptedPassword.isNullOrEmpty()) {
-            return ApiResponse(HttpStatus.BAD_REQUEST, "密码不能为空")
-        }
-
-        try {
-            val decryptedPassword = RSAUtils.decrypt(encryptedPassword, privateKey)
-            println("password: $decryptedPassword")
-            val user = User(username, password =  decryptedPassword, email = email)
-            return handleUserAuthentication(user, userService.register(user))
-        } catch (e: Exception) {
-            logger?.error("注册解密失败: ${e.message}")
-            return ApiResponse(HttpStatus.BAD_REQUEST, "密码解密失败")
-        }
-    }
+    fun register(@RequestBody request: Map<String, String>): ApiResponse<Map<String, Any?>> =
+        request["password"]?.let { encryptedPassword ->
+            try {
+                val decryptedPassword = RSAUtils.decrypt(encryptedPassword, privateKey)
+                val user = User(
+                    username = request["username"],
+                    password = decryptedPassword,
+                    email = request["email"]
+                )
+                handleUserAuthentication(user, userService.register(user))
+            } catch (e: Exception) {
+                logger.error("注册解密失败: ${e.message}")
+                ApiResponse(HttpStatus.BAD_REQUEST, "密码解密失败")
+            }
+        } ?: ApiResponse(HttpStatus.BAD_REQUEST, "密码不能为空")
 
     @PostMapping("/logout")
     fun logout(): ApiResponse<Map<String, Any?>> {
@@ -78,49 +72,50 @@ class UserController(private val userService: UserService,
             return ApiResponse(authPair.first, authPair.second)
         }
 
-        // 明确处理 completedUser 为 null 的情况
         val completedUser = userService.getCompleteUser(user)
             ?: return ApiResponse(HttpStatus.NOT_FOUND, "User not found")
 
-        // 确保 user.username 非空（根据业务逻辑）
         val username = completedUser.username
             ?: return ApiResponse(HttpStatus.BAD_REQUEST, "Username is missing")
 
-        // 生成 token 和 refreshToken
         val token = jwtService.generateToken(username)
         val refreshToken = jwtService.generateRefreshToken(username)
 
-        val data = mapOf(
-            "refreshToken" to refreshToken,
-            "token" to token,
-            "expiresIn" to expirationTime.toString(),
-            "user" to UserDTO(
-                username = completedUser.username,
-                email = completedUser.email
+        return ApiResponse(
+            authPair.first,
+            authPair.second,
+            mapOf(
+                "refreshToken" to refreshToken,
+                "token" to token,
+                "expiresIn" to expirationTime.toString(),
+                "user" to UserDTO(
+                    username = completedUser.username,
+                    email = completedUser.email
+                )
             )
         )
-        return ApiResponse(authPair.first, authPair.second, data)
     }
 
     @PostMapping("/refresh")
-    fun refresh(@RequestBody refreshTokenDTO: RefreshTokenDTO): ApiResponse<Any?> {
+    fun refresh(@RequestBody refreshTokenDTO: RefreshTokenDTO): ApiResponse<Any?> =
         if (jwtService.validateRefreshToken(refreshTokenDTO.username, refreshTokenDTO.refreshToken)) {
             val newToken = jwtService.generateToken(refreshTokenDTO.username)
             val refreshToken = jwtService.generateRefreshToken(refreshTokenDTO.username)
-            return ApiResponse(HttpStatus.OK, data = mapOf(
-                "token" to newToken,
-                "refreshToken" to refreshToken
-            ))
+            ApiResponse(
+                HttpStatus.OK,
+                data = mapOf(
+                    "token" to newToken,
+                    "refreshToken" to refreshToken
+                )
+            )
         } else {
-            return ApiResponse(HttpStatus.UNAUTHORIZED, "无效的刷新令牌")
+            ApiResponse(HttpStatus.UNAUTHORIZED, "无效的刷新令牌")
         }
-    }
 
     @PostMapping("/token")
-    fun getToken(): ApiResponse<Map<String, String?>> {
-        val token = jwtService.getTokenByUsername()
-        return ApiResponse(HttpStatus.OK, data = mapOf(
-            "token" to token
-        ))
-    }
+    fun getToken(): ApiResponse<Map<String, String?>> =
+        ApiResponse(
+            HttpStatus.OK,
+            data = mapOf("token" to jwtService.getTokenByUsername())
+        )
 }

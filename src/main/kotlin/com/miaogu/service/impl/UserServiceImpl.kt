@@ -14,50 +14,45 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserServiceImpl(
     private val userMapper: UserMapper,
-    private val passwordService: PasswordService // 注入 PasswordService
+    private val passwordService: PasswordService
 ) : ServiceImpl<UserMapper, User>(), UserService {
 
     override fun register(user: User?): Pair<HttpStatus, String?> {
-        // 使用用户验证链进行验证
         val validationChain = UserValidationChain(userMapper)
-        if (user != null) {
-            println("password：" + user.password)
-        }
-        val errorMessage = user?.let { validationChain.validate(it) }
 
-        return if (errorMessage != null) {
-            HttpStatus.BAD_REQUEST to errorMessage // 返回错误信息
-        } else {
-            // 生成 JWT 令牌并插入用户
-            user?.let {
+        return user?.let { nonNullUser ->
+            val errorMessage = validationChain.validate(nonNullUser)
+
+            if (errorMessage != null) {
+                HttpStatus.BAD_REQUEST to errorMessage
+            } else {
                 // 对密码进行加盐和哈希处理
-                it.password = it.password?.let { rawPassword -> passwordService.encodePassword(rawPassword) }
-                userMapper.insert(it)
-
-                HttpStatus.OK to "注册成功" // 返回成功状态和 JWT
-            } ?: run {
-                HttpStatus.BAD_REQUEST to "用户信息不能为空" // 处理 user 为 null 的情况
+                nonNullUser.password = nonNullUser.password?.let { passwordService.encodePassword(it) }
+                userMapper.insert(nonNullUser)
+                HttpStatus.OK to "注册成功"
             }
-        }
+        } ?: (HttpStatus.BAD_REQUEST to "用户信息不能为空")
     }
 
     override fun login(user: User?): Pair<HttpStatus, String?> {
         // 验证用户输入
-        if (user == null || (user.username?.isEmpty() == true && user.email?.isEmpty() == true)) {
+        if (user == null || (user.username.isNullOrEmpty() && user.email.isNullOrEmpty())) {
             return HttpStatus.BAD_REQUEST to "用户名或邮箱不能为空"
         }
+
+        // 定义验证凭据的函数
         fun checkCredentials(userInfo: User?, password: String?): Pair<HttpStatus, String?> = when {
             userInfo == null -> HttpStatus.BAD_REQUEST to "用户名或邮箱不存在"
-            !userInfo.password?.let { passwordService.matches(password ?: "", it) }!! -> HttpStatus.BAD_REQUEST to "密码错误" // 使用 PasswordService 验证密码
-            else -> {
-                HttpStatus.OK to "登录成功" // 返回成功状态和 JWT
-            }
+            !userInfo.password?.let { passwordService.matches(password ?: "", it) }!! ->
+                HttpStatus.BAD_REQUEST to "密码错误"
+            else -> HttpStatus.OK to "登录成功"
         }
 
         // 检查用户名
         userMapper.selectOne(QueryWrapper<User>().eq("username", user.username))?.let {
             return checkCredentials(it, user.password)
         }
+
         // 检查邮箱
         userMapper.selectOne(QueryWrapper<User>().eq("email", user.username))?.let {
             return checkCredentials(it, user.password)
@@ -69,13 +64,15 @@ class UserServiceImpl(
 
     @Transactional
     override fun getCompleteUser(user: User?): User? {
-        val queryWrapper = QueryWrapper<User>()
+        if (user == null) return null
 
-        user?.username?.takeIf { it.isNotEmpty() }?.let {
-            queryWrapper.eq("username", it).or()
-            queryWrapper.eq("email", it)
+        return user.username?.takeIf { it.isNotEmpty() }?.let { username ->
+            val queryWrapper = QueryWrapper<User>().apply {
+                eq("username", username).or()
+                eq("email", username)
+                last("LIMIT 1")
+            }
+            getOne(queryWrapper)
         }
-        queryWrapper.last("LIMIT 1")
-        return this.getOne(queryWrapper)
     }
 }
